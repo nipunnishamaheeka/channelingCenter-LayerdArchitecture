@@ -177,7 +177,7 @@ public class OverViewFromController implements Initializable {
 
     private void loadAllAppoinments() throws SQLException {
         try {
-            List<AppoinmentDto> dtoList = appoinmentModel.getAllAppoinment();
+            List<AppoinmentDto> dtoList = appoinmentModel.getPendingAppoinemts();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -261,7 +261,7 @@ public class OverViewFromController implements Initializable {
         colAction.setCellValueFactory(new PropertyValueFactory<>("deleteButton"));
         colDrId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDrName.setCellValueFactory(new PropertyValueFactory<>("doctor_name"));
-        colStatus.setCellValueFactory(new PropertyValueFactory<>("deleteButton"));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("type"));
 
     }
 

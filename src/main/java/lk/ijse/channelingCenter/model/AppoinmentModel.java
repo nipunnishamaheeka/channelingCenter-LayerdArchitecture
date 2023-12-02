@@ -2,7 +2,6 @@ package lk.ijse.channelingCenter.model;
 
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
-import lk.ijse.channelingCenter.dto.PatientDto;
 import lombok.SneakyThrows;
 
 import java.sql.Connection;
@@ -54,6 +53,31 @@ public class AppoinmentModel {
             throwables.printStackTrace();
         }
         return null;
+    }
+    public List<AppoinmentDto> getPendingAppoinemts() throws SQLException {
+        Connection connection = DbConnection.getInstance().getConnection();
+
+        String sql = "SELECT * FROM appoinment where status = 'pending'";
+        PreparedStatement pstm = connection.prepareStatement(sql);
+
+        List<AppoinmentDto> dtoList = new ArrayList<>();
+
+        ResultSet resultSet = pstm.executeQuery();
+
+        while (resultSet.next()) {
+            String appoinment_id = resultSet.getString(1);
+            String date = resultSet.getString(2);
+            String patient_id = resultSet.getString(3);
+            String age = resultSet.getString(4);
+            String id = resultSet.getString(5);
+            String doctor_name = resultSet.getString(6);
+            String patientName = resultSet.getString(7);
+            String status = resultSet.getString(8);
+
+            var dto = new AppoinmentDto(appoinment_id, date, patient_id,patientName,age,id,doctor_name,status);
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 
 
