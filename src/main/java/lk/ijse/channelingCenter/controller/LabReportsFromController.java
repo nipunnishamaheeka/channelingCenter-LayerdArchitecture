@@ -278,7 +278,7 @@ public class LabReportsFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<PatientDto> cusList = new PatientDAOImpl().getAllPatient();
+            List<PatientDto> cusList = new PatientDAOImpl().getAll();
 
             for (PatientDto dto : cusList) {
                 obList.add(dto.getPatient_id());

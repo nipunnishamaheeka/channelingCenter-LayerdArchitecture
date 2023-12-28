@@ -11,6 +11,7 @@ import java.util.List;
 
 public class DoctorDAOImpl implements DoctorDAO {
     @Override
+
     public String getCount() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT COUNT(*) FROM doctor");
         if (resultSet.next()) {

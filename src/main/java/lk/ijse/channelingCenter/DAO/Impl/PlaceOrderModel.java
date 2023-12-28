@@ -47,8 +47,8 @@ public class PlaceOrderModel {
             boolean isAppoinmentUpdated = new AppoinmentDAOImpl().updateAppoinmentStatus(dto.getAppoinment_id());
             if (isAppoinmentUpdated) {
                 System.out.println("appoinmentUpdated");
-                String payId = new PaymentDAOImpl().autoGenaratePatientId();
-                boolean isPaid = new PaymentDAOImpl().savePayment(new PaymentDto(payId, dto.getDate(), dto.getTime(), dto.getAmount(), dto.getAppoinment_id()));
+                String payId = new PaymentDAOImpl().generateNextId();
+                boolean isPaid = new PaymentDAOImpl().save(new PaymentDto(payId, dto.getDate(), dto.getTime(), dto.getAmount(), dto.getAppoinment_id()));
                 if (isPaid) {
                     System.out.println("paymentUpdated");
                     if (!dto.getTmlist().isEmpty()) {

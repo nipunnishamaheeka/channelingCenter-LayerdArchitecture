@@ -128,7 +128,7 @@ public class NavigationPannelFromController implements Initializable {
 
         var model = new PatientDAOImpl();
         try {
-            PatientDto dto = model.searchPatient(id);
+            PatientDto dto = model.search(id);
 
             if(dto != null) {
                 fillFields(dto);

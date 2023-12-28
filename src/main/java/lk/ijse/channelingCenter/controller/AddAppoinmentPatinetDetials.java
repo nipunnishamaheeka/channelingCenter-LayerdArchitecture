@@ -58,7 +58,7 @@ public class AddAppoinmentPatinetDetials {
 
             try {
                 PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
-                boolean isSaved = patientDAOImpl.savePatient(itemDto);
+                boolean isSaved = patientDAOImpl.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -103,7 +103,7 @@ public class AddAppoinmentPatinetDetials {
     }
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientDAOImpl().autoGenaratePatientId());
+            lblPatientId.setText(new PatientDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {

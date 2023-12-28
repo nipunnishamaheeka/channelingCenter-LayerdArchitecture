@@ -56,7 +56,7 @@ public class CompleteOrderFromController {
     private void loadCompleteOrders() throws ClassNotFoundException {
         AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
         try {
-            List<AppoinmentDto> allAppoinment = appoinmentModel.getAllAppoinment();
+            List<AppoinmentDto> allAppoinment = appoinmentModel.getAll();
             ObservableList<CompleteOrdersTm> list = FXCollections.observableArrayList();
             for (AppoinmentDto dto : allAppoinment) {
                 if (dto.getStatus().equals("complete")) {

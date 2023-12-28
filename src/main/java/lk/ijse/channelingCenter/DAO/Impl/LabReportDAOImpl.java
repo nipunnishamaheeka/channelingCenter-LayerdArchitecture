@@ -12,22 +12,22 @@ import java.util.List;
 public class LabReportDAOImpl implements LabReportDAO {
     @Override
     public boolean save(final LabReportDto dto) throws SQLException, ClassNotFoundException {
-        return CrudUtil.crudUtil("insert into LabReport values(?,?,?,?,?,?,?,?,?,?,?,?)",dto.getLab_reportid(),
-        dto.getPatient_id(),
-        dto.getDate(),
-        dto.getDoctor_id(),
-        dto.getDoctor_name(),
-        dto.getAge(),
-        dto.getGender(),
-        dto.getPatient_name(),
-        dto.getTest_name(),
-        dto.getTest_result(),
-        dto.getUnits(),
-        dto.getOthers());
+        return CrudUtil.crudUtil("insert into LabReport values(?,?,?,?,?,?,?,?,?,?,?,?)", dto.getLab_reportid(),
+                dto.getPatient_id(),
+                dto.getDate(),
+                dto.getDoctor_id(),
+                dto.getDoctor_name(),
+                dto.getAge(),
+                dto.getGender(),
+                dto.getPatient_name(),
+                dto.getTest_name(),
+                dto.getTest_result(),
+                dto.getUnits(),
+                dto.getOthers());
 
     }
 
-@Override
+    @Override
     public String generateNextId() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM labreport ORDER BY lab_reportId DESC LIMIT 1");
         String current = null;
@@ -39,7 +39,8 @@ public class LabReportDAOImpl implements LabReportDAO {
 
         return splitId(null);
     }
-@Override
+
+    @Override
     public String splitId(String current) {
 
         if (current != null) {
@@ -74,7 +75,7 @@ public class LabReportDAOImpl implements LabReportDAO {
             String others = resultSet.getString(12);
 
 
-            dto = new LabReportDto(lab_reportId,patient_id,doctor_name,date,doctor_id,age,gender,patient_name,test_name,test_result,units,others);
+            dto = new LabReportDto(lab_reportId, patient_id, doctor_name, date, doctor_id, age, gender, patient_name, test_name, test_result, units, others);
         }
 
         return dto;
@@ -85,7 +86,7 @@ public class LabReportDAOImpl implements LabReportDAO {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT p.email +" +
                 "from patient p +" +
                 "join labreport l on p.patient_id = l.patient_id +" +
-                "where l.lab_reportId = ?",id);
+                "where l.lab_reportId = ?", id);
 
         String email = null;
 
@@ -95,9 +96,10 @@ public class LabReportDAOImpl implements LabReportDAO {
 
         return email;
     }
-@Override
+
+    @Override
     public List<LabReportDto> getAll() throws SQLException, ClassNotFoundException {
-        ResultSet resultSet =  CrudUtil.crudUtil("SELECT * FROM labreport");
+        ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM labreport");
         List<LabReportDto> dtoList = new ArrayList<>();
 
         while (resultSet.next()) {
@@ -115,28 +117,31 @@ public class LabReportDAOImpl implements LabReportDAO {
             String others = resultSet.getString(12);
 
 
-            var dto = new LabReportDto(lab_reportId,patient_id,date,doctor_id,doctor_name,age,gender,patient_name,test_name,test_result,units,others);
+            var dto = new LabReportDto(lab_reportId, patient_id, date, doctor_id, doctor_name, age, gender, patient_name, test_name, test_result, units, others);
             dtoList.add(dto);
         }
         return dtoList;
 
     }
-@Override
+
+    @Override
     public boolean update(LabReportDto ReportDto) throws SQLException, ClassNotFoundException {
-        return CrudUtil.crudUtil("UPDATE labreport SET patient_id = ?,date = ?,doctor_id = ?,doctor_name = ?,age = ?, gender = ? patient_id = ?,test_name = ?, test_result = ?, units = ? , others = ? WHERE  = lab_reportId = ?",ReportDto.getLab_reportid(),
-        ReportDto.getPatient_id(),
-        ReportDto.getDate(),
-        ReportDto.getDoctor_id(),
-        ReportDto.getDoctor_name(),
-        ReportDto.getAge(),
-        ReportDto.getGender(),
-        ReportDto.getPatient_name(),
-        ReportDto.getTest_name(),
-        ReportDto.getTest_result(),
-        ReportDto.getUnits(),
-        ReportDto.getOthers());
+        return CrudUtil.crudUtil("UPDATE labreport SET patient_id = ?,date = ?,doctor_id = ?,doctor_name = ?,age = ?, gender = ?, patient_name = ?,test_name = ?, test_result = ?, units = ? , others = ? WHERE lab_reportId = ?",
+                ReportDto.getPatient_id(),
+                ReportDto.getDate(),
+                ReportDto.getDoctor_id(),
+                ReportDto.getDoctor_name(),
+                ReportDto.getAge(),
+                ReportDto.getGender(),
+                ReportDto.getPatient_name(),
+                ReportDto.getTest_name(),
+                ReportDto.getTest_result(),
+                ReportDto.getUnits(),
+                ReportDto.getOthers(),
+                ReportDto.getLab_reportid());
     }
-@Override
+
+    @Override
     public boolean delete(String code) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("DELETE FROM labreport WHERE lab_reportId = ?");
 

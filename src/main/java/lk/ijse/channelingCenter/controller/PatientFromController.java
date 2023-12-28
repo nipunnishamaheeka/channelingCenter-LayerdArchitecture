@@ -117,7 +117,7 @@ public class PatientFromController {
         ObservableList<PatientTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PatientDto> dtoList = new PatientDAOImpl().getAllPatient();
+            List<PatientDto> dtoList = new PatientDAOImpl().getAll();
 
             for (PatientDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -189,16 +189,6 @@ public class PatientFromController {
                 }
             });
 
-//            modify area
-
-
-
-
-
-
-
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -208,7 +198,7 @@ public class PatientFromController {
 
     private void deletePatient(String code) {
         try {
-            boolean b = patientDAOImpl.deletePatient(code);
+            boolean b = patientDAOImpl.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }
@@ -273,7 +263,7 @@ public class PatientFromController {
                 PatientDto itemDto = new PatientDto(id, name, number, address, sex, email, age, blood);
 
                 PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
-                boolean isSaved = patientDAOImpl.savePatient(itemDto);
+                boolean isSaved = patientDAOImpl.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -296,7 +286,7 @@ public class PatientFromController {
         String number = txtNumber.getText();
 
         try {
-            PatientDto dto = patientDAOImpl.searchNumber(number);
+            PatientDto dto = patientDAOImpl.getDetailByContact(number);
             if (dto != null) {
                 setFields(dto);
 
@@ -350,7 +340,7 @@ public class PatientFromController {
             String Age = txtAge.getText();
 
             try {
-                boolean isUpdated = patientDAOImpl.updatePatient(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
+                boolean isUpdated = patientDAOImpl.update(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient updated").show();
                     clearFields();
@@ -367,7 +357,7 @@ public class PatientFromController {
 
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientDAOImpl().autoGenaratePatientId());
+            lblPatientId.setText(new PatientDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {

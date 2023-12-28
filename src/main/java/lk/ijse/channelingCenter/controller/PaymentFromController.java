@@ -65,7 +65,7 @@ public class PaymentFromController {
         ObservableList<PaymentTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PaymentDto> dtoList = new PaymentDAOImpl().getAllPayments();
+            List<PaymentDto> dtoList = new PaymentDAOImpl().getAll();
 
             for (PaymentDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -106,7 +106,7 @@ public class PaymentFromController {
 
     private void deletePatient(String code) {
         try {
-            boolean isDeleted = new PaymentDAOImpl().deletePayment(code);
+            boolean isDeleted = new PaymentDAOImpl().delete(code);
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted Successfully !", ButtonType.OK).show();
             } else {

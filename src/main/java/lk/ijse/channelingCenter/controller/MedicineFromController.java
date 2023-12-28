@@ -56,13 +56,14 @@ public class MedicineFromController {
     @FXML
     private Label totalStock;
     MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
+    AppoinmentDAOImpl appoinmentDAOImpl = new AppoinmentDAOImpl();
 
 CompleteOrderDAOImpl completeOrderDAOImpl = new CompleteOrderDAOImpl();
     public void initialize() throws SQLException, ClassNotFoundException {
         completeOrders.setText(completeOrderDAOImpl.getAllOrders());
-        pendingOrders.setText(AppoinmentDAOImpl.getPendingOrders());
-        totalStock.setText(MedicineDAOImpl.getAll());
-        totalOrders.setText(AppoinmentDAOImpl.getAll());
+        pendingOrders.setText(appoinmentDAOImpl.getPendingOrders());
+        totalStock.setText(medicineDAOImpl.getAllCount());
+        totalOrders.setText(appoinmentDAOImpl.getAllCount());
         loadAllMedicine();
         setMedicineCode();
         setCellValueFactory();
@@ -107,7 +108,7 @@ private void loadMedicineTypes() {
 }
     private void setMedicineCode() {
         try {
-            lblCode.setText(new MedicineDAOImpl().autoGenarateMedicineId());
+            lblCode.setText(new MedicineDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {
@@ -129,7 +130,7 @@ private void loadMedicineTypes() {
 
             try {
                 MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
-                boolean isSaved = medicineDAOImpl.saveMedicine(itemDto);
+                boolean isSaved = medicineDAOImpl.save(itemDto);
                 //System.out.println(isSaved);
                 if (isSaved) {
 
@@ -188,7 +189,7 @@ private void loadMedicineTypes() {
 
         try {
             MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
-            boolean isUpdated = medicineDAOImpl.updateMedicine(itemDto);
+            boolean isUpdated = medicineDAOImpl.update(itemDto);
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Medicine updated!").show();
                 clearFields();
@@ -224,7 +225,7 @@ private void loadMedicineTypes() {
 
     private void loadAllMedicine() throws SQLException {
         try {
-            List<MedicineDto> dtoList = medicineDAOImpl.getAllMedicine();
+            List<MedicineDto> dtoList = medicineDAOImpl.getAll();
 
             ObservableList<MedicineTm> obList = FXCollections.observableArrayList();
 
@@ -293,7 +294,7 @@ private void loadMedicineTypes() {
 
     private void deleteItem(String code) {
         try {
-            boolean isDeleted = medicineDAOImpl.deleteMedicine(code);
+            boolean isDeleted = medicineDAOImpl.delete(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }

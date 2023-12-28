@@ -1,5 +1,6 @@
 package lk.ijse.channelingCenter.DAO.Impl;
 
+import lk.ijse.channelingCenter.DAO.AppoinmentDAO;
 import lk.ijse.channelingCenter.Util.CrudUtil;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppoinmentDAOImpl {
+public class AppoinmentDAOImpl implements AppoinmentDAO {
     @SneakyThrows
     public static String getToday() {
         String today = java.time.LocalDate.now().toString();
@@ -28,16 +29,16 @@ public class AppoinmentDAOImpl {
         }
         return null;
     }
-
-    public static String getAll() throws SQLException, ClassNotFoundException {
+@Override
+    public String getAllCount() throws SQLException, ClassNotFoundException {
         ResultSet rst = CrudUtil.crudUtil("SELECT COUNT(*) FROM appoinment");
         if (rst.next()) {
             return rst.getString(1);
         }
         return null;
     }
-
-    public static String getPendingOrders() throws SQLException, ClassNotFoundException {
+@Override
+    public String getPendingOrders() throws SQLException, ClassNotFoundException {
 
         ResultSet rst = CrudUtil.crudUtil("SELECT COUNT(*) FROM appoinment where status = 'pending'");
         if (rst.next()) {
@@ -45,7 +46,7 @@ public class AppoinmentDAOImpl {
         }
         return null;
     }
-
+@Override
     public List<AppoinmentDto> getPendingAppoinemts() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment where status = 'pending'");
         List<AppoinmentDto> dtoList = new ArrayList<>();
@@ -66,11 +67,12 @@ public class AppoinmentDAOImpl {
         return dtoList;
     }
 
-
-    public boolean saveAppoinment(final AppoinmentDto dto) throws SQLException, ClassNotFoundException {
+@Override
+    public boolean save(final AppoinmentDto dto) throws SQLException, ClassNotFoundException {
          return CrudUtil.crudUtil("insert into appoinment values(?,?,?,?,?,?,?,?)",dto.getAppoinment_id(),dto.getDate(),dto.getPatinet_id(), dto.getAge(), dto.getId(), dto.getDoctor_name(), dto.getPatinetName(), dto.getStatus());
     }
-    public boolean updateAppoinment(final AppoinmentDto dto) throws SQLException {
+    @Override
+    public boolean update(final AppoinmentDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
         String sql = "UPDATE appoinment SET patient_id = ?,date = ?,time = ?,id = ?,fee_status = ?,age = ?,status =? WHERE  = appoinment_id?";
@@ -87,8 +89,8 @@ public class AppoinmentDAOImpl {
 
         return pstm.executeUpdate() > 0;
     }
-
-    public List<AppoinmentDto> getAllAppoinment() throws SQLException, ClassNotFoundException {
+@Override
+    public List<AppoinmentDto> getAll() throws SQLException, ClassNotFoundException {
 
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment");
         List<AppoinmentDto> dtoList = new ArrayList<>();
@@ -108,13 +110,19 @@ public class AppoinmentDAOImpl {
         }
         return dtoList;
     }
-
-    public boolean deleteAppoinment(String id) throws SQLException, ClassNotFoundException {
+@Override
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("DELETE FROM appoinment WHERE appoinment_id = ?", id);
 
     }
 
-    public String autoGenarateId() throws SQLException, ClassNotFoundException {
+    @Override
+    public AppoinmentDto getDetailByContact(String contact) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public String generateNextId() throws SQLException, ClassNotFoundException {
 
         ResultSet resultSet = CrudUtil.crudUtil("SELECT appoinment_id FROM appoinment ORDER BY appoinment_id DESC LIMIT 1");
         String current = null;
@@ -124,8 +132,8 @@ public class AppoinmentDAOImpl {
         }
         return splitId(null);
     }
-
-    private String splitId(String current) {
+@Override
+    public String splitId(String current) {
 
         if (current != null) {
             String[] tempArray = current.split("A");
@@ -137,7 +145,7 @@ public class AppoinmentDAOImpl {
         }
         return "A001";
     }
-
+@Override
     public AppoinmentDto searchAppoinmentID(String Aid) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment WHERE appoinment_id = ?", Aid);
         AppoinmentDto dto = null;

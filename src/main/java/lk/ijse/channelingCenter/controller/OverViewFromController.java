@@ -15,6 +15,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import lk.ijse.channelingCenter.DAO.AppoinmentDAO;
+import lk.ijse.channelingCenter.DAO.DoctorDAO;
+import lk.ijse.channelingCenter.DAO.MedicineDAO;
+import lk.ijse.channelingCenter.DAO.PatientDAO;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
@@ -64,17 +68,19 @@ public class OverViewFromController implements Initializable {
     @FXML
     private Label AllDoctors;
 
-    AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
-    DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
+    AppoinmentDAO appoinmentDAOImpl = new AppoinmentDAOImpl();
+    DoctorDAO doctorDAOImpl = new DoctorDAOImpl();
+    PatientDAO patientDAOImpl = new PatientDAOImpl();
+    MedicineDAO medicineDAOImpl = new MedicineDAOImpl();
     @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ApoToday.setText(AppoinmentDAOImpl.getToday());
-        patientToday.setText(PatientDAOImpl.getAll());
+        patientToday.setText(patientDAOImpl.getCount());
         doctorToday.setText(doctorDAOImpl.getCount());
-        medicineStock.setText(MedicineDAOImpl.getAll());
+        medicineStock.setText(medicineDAOImpl.getAllCount());
         ApoinemntToday.setText(AppoinmentDAOImpl.getToday());
-        AllAppoinments.setText(AppoinmentDAOImpl.getAll());
+        AllAppoinments.setText(appoinmentDAOImpl.getAllCount());
         AllDoctors.setText(doctorDAOImpl.getCount());
 
         loadAllAppoinments();
@@ -159,7 +165,7 @@ private void setPieChart(){
 
     private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
-            List<AppoinmentDto> dtoList = appoinmentModel.getPendingAppoinemts();
+            List<AppoinmentDto> dtoList = appoinmentDAOImpl.getPendingAppoinemts();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -222,7 +228,7 @@ private void setPieChart(){
 
     private void deleteItem(String code) throws ClassNotFoundException {
         try {
-            boolean b = appoinmentModel.deleteAppoinment(code);
+            boolean b = appoinmentDAOImpl.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }

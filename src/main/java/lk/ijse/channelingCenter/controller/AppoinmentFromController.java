@@ -71,7 +71,7 @@ public class AppoinmentFromController {
 
     private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
-            List<AppoinmentDto> dtoList = appoinmentmodel.getAllAppoinment();
+            List<AppoinmentDto> dtoList = appoinmentmodel.getAll();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -125,7 +125,7 @@ public class AppoinmentFromController {
 
     private void deleteItem(String code) throws ClassNotFoundException {
         try {
-            boolean isDeleted = appoinmentmodel.deleteAppoinment(code);
+            boolean isDeleted = appoinmentmodel.delete(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }

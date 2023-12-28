@@ -65,7 +65,7 @@ public class AddAppoinmentFromController {
 
     private void setAppoinmentId() throws ClassNotFoundException {
         try {
-            lblAppoinmentId.setText(new AppoinmentDAOImpl().autoGenarateId());
+            lblAppoinmentId.setText(new AppoinmentDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -103,11 +103,11 @@ public class AddAppoinmentFromController {
         String patinetName = lblPatientName.getText();
         String status = "pending";
 
-        AppoinmentDto itemDto = new AppoinmentDto(appoinmentId,date,id,age,doctorId,doctorName,patinetName,status);
+        AppoinmentDto itemDto = new AppoinmentDto(appoinmentId,date,id,patinetName,age,doctorId,doctorName,status);
 
         try {
             AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
-            boolean isSaved = appoinmentModel.saveAppoinment(itemDto);
+            boolean isSaved = appoinmentModel.save(itemDto);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Appoinment Saved!", ButtonType.OK).show();
@@ -125,7 +125,7 @@ public class AddAppoinmentFromController {
     private void loadAllItems() throws ClassNotFoundException {
         ObservableList<AppoinmentDto> obList = FXCollections.observableArrayList();
         try {
-            List<AppoinmentDto> appoinmentDtoList = appoinmentModel.getAllAppoinment();
+            List<AppoinmentDto> appoinmentDtoList = appoinmentModel.getAll();
             for (AppoinmentDto dto : appoinmentDtoList) {
                 obList.add(dto);
             }
@@ -151,7 +151,7 @@ public class AddAppoinmentFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<PatientDto> cusList = new PatientDAOImpl().getAllPatient();
+            List<PatientDto> cusList = new PatientDAOImpl().getAll();
 
             for (PatientDto dto : cusList) {
                 obList.add(dto.getPatient_id());

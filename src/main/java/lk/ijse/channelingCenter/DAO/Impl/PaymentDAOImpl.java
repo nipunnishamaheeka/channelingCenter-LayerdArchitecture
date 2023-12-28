@@ -1,5 +1,6 @@
 package lk.ijse.channelingCenter.DAO.Impl;
 
+import lk.ijse.channelingCenter.DAO.PaymentDAO;
 import lk.ijse.channelingCenter.Util.CrudUtil;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.PaymentDto;
@@ -8,31 +9,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentDAOImpl {
-    public boolean savePayment(final PaymentDto dto) throws SQLException, ClassNotFoundException {
-        return CrudUtil.crudUtil("insert into payment values(?,?,?,?,?)",dto.getPayment_id(),
-        dto.getPayment_date(),
-        dto.getPayment_time(),
-        dto.getAmount(),
-        dto.getAppoinment_id());
-//        Connection connection = DbConnection.getInstance().getConnection();
+public class PaymentDAOImpl implements PaymentDAO {
 
-//        String sql = "insert into payment values(?,?,?,?,?)";
-//        PreparedStatement pstm = connection.prepareStatement(sql);
+    @Override
+    public boolean save(final PaymentDto dto) throws SQLException, ClassNotFoundException {
+        return CrudUtil.crudUtil("insert into payment values(?,?,?,?,?)", dto.getPayment_id(),
+                dto.getPayment_date(),
+                dto.getPayment_time(),
+                dto.getAmount(),
+                dto.getAppoinment_id());
 
-//        pstm.setString(1, dto.getPayment_id());
-//        pstm.setDate(2, dto.getPayment_date());
-//        pstm.setTime(3, dto.getPayment_time());
-//        pstm.setDouble(4, dto.getAmount());
-//        pstm.setString(5, dto.getAppoinment_id());
-//
-//        boolean isSaved = pstm.executeUpdate() > 0;
-//
-//        return isSaved;
 
     }
-
-    public boolean updatePayment(final PaymentDto dto) throws SQLException {
+@Override
+    public boolean update(final PaymentDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
         String sql = "UPDATE payment SET payment_id = ?,payment_date = ?,payment_time = ?,amount = ?,appointment_id = ?  WHERE  = payment_id?";
@@ -72,22 +62,19 @@ public class PaymentDAOImpl {
         return dto;
     }
 
-    public boolean deletePayment(String payment_id) throws SQLException, ClassNotFoundException {
-        return CrudUtil.crudUtil("DELETE FROM payment WHERE payment_id = ?",payment_id);
-//        Connection connection = DbConnection.getInstance().getConnection();
-//
-//        String sql = "DELETE FROM payment WHERE payment_id = ?";
-//        PreparedStatement pstm = connection.prepareStatement(sql);
-//        pstm.setString(1, payment_id);
-//
-//        return pstm.executeUpdate() > 0;
+    @Override
+    public boolean delete(String payment_id) throws SQLException, ClassNotFoundException {
+        return CrudUtil.crudUtil("DELETE FROM payment WHERE payment_id = ?", payment_id);
     }
 
-    public String autoGenaratePatientId() throws SQLException, ClassNotFoundException {
+    @Override
+    public PaymentDto getDetailByContact(String contact) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public String generateNextId() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM payment ORDER BY payment_id DESC LIMIT 1");
-//        Connection connection = DbConnection.getInstance().getConnection();
-//
-//        ResultSet resultSet = connection.prepareStatement("SELECT * FROM payment ORDER BY payment_id DESC LIMIT 1").executeQuery();
         String current = null;
         while (resultSet.next()) {
             current = resultSet.getString(1);
@@ -98,7 +85,7 @@ public class PaymentDAOImpl {
         return splitId(null);
     }
 
-    private String splitId(String current) {
+    public String splitId(String current) {
 
         if (current != null) {
             String[] tempArray = current.split("PA");
@@ -111,17 +98,10 @@ public class PaymentDAOImpl {
         return "PA001";
     }
 
-
-    public List<PaymentDto> getAllPayments() throws SQLException, ClassNotFoundException {
+@Override
+    public List<PaymentDto> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM payment");
-//        Connection connection = DbConnection.getInstance().getConnection();
-//
-//        String sql = "SELECT * FROM payment";
-//        PreparedStatement pstm = connection.prepareStatement(sql);
-
         List<PaymentDto> dtoList = new ArrayList<>();
-
-        //ResultSet resultSet = pstm.executeQuery();
 
         while (resultSet.next()) {
             String Payment_id = resultSet.getString(1);

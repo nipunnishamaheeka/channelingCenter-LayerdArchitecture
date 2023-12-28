@@ -116,7 +116,7 @@ public class MedicinePlaceOrderFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<MedicineDto> cusList = new MedicineDAOImpl().getAllMedicine();
+            List<MedicineDto> cusList = new MedicineDAOImpl().getAll();
 
             for (MedicineDto dto : cusList) {
                 obList.add(dto.getMedi_code());
