@@ -10,14 +10,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
-import lk.ijse.channelingCenter.model.EmployeeModel;
+import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
-import javax.naming.ldap.PagedResultsControl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -52,7 +51,7 @@ public class EmployeeDetailsFromController {
 
     @FXML
     private TextField txtSalary;
-    EmployeeModel employeeModel = new EmployeeModel();
+    EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
 
     public void initialize() throws SQLException {
         setEmployeeID();
@@ -63,7 +62,7 @@ public class EmployeeDetailsFromController {
 
     private void setEmployeeID() {
         try {
-            lblEmpId.setText(new EmployeeModel().autoGenarateEmployeeId());
+            lblEmpId.setText(new EmployeeDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -96,7 +95,7 @@ public class EmployeeDetailsFromController {
             txtName.setStyle("-fx-border-color: green");
         }
         String numberText = txtNumber.getText();
-        boolean isNumberValid = Pattern.compile("[(07)]\\d{9}|[+]\\d{11}").matcher(numberText).matches();
+        boolean isNumberValid = Pattern.compile("^(?:7|0|(?:\\+94))[0-9]{9,10}$").matcher(numberText).matches();
         if (!isNumberValid) {
             txtNumber.setStyle("-fx-border-color: red");
             new animatefx.animation.Shake(txtNumber).play();
@@ -125,7 +124,7 @@ public class EmployeeDetailsFromController {
         return true;
     }
 
-    public void btnAddOnAction(ActionEvent actionEvent) {
+    public void btnAddOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         boolean isEmployeeValid = validateEmployee();
 
         if (isEmployeeValid) {
@@ -140,8 +139,8 @@ public class EmployeeDetailsFromController {
             EmployeeDto itemDto = new EmployeeDto(id, name, address, number, jobRole, qualification, salary);
 
             try {
-                EmployeeModel employeeModel = new EmployeeModel();
-                boolean isAdded = employeeModel.saveEmployee(itemDto);
+                EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
+                boolean isAdded = employeeModel.save(itemDto);
                 if (isAdded) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Employee added", ButtonType.OK).show();
                     clearFields();
@@ -156,11 +155,11 @@ public class EmployeeDetailsFromController {
         }
     }
 
-    public void btnDeleteOnAction(ActionEvent actionEvent) {
+    public void btnDeleteOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String id = txtId.getText();
 
         try {
-            boolean isDeleted = employeeModel.deleteEmployee(id);
+            boolean isDeleted = employeeModel.delete(id);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Employee deleted!").show();
@@ -174,7 +173,7 @@ public class EmployeeDetailsFromController {
     }
 
 
-    public void btnUpdateOnAction(ActionEvent actionEvent) {
+    public void btnUpdateOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String id = lblEmpId.getText();
         String name = txtName.getText();
         String address = txtAddress.getText();
@@ -186,7 +185,7 @@ public class EmployeeDetailsFromController {
         var EmployeeDto = new EmployeeDto(id, name, address, number, jobRole, qualification, salary);
 
         try {
-            boolean isUpdated = employeeModel.updateEmployee(EmployeeDto);
+            boolean isUpdated = employeeModel.update(EmployeeDto);
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Employee updated").show();
                 clearFields();
@@ -236,10 +235,10 @@ public class EmployeeDetailsFromController {
 
     }
 
-    public void btnSearchEmpIdOnAction(ActionEvent actionEvent) {
+    public void btnSearchEmpIdOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String id = txtemployeeId.getText();
 
-        var model = new EmployeeModel();
+        var model = new EmployeeDAOImpl();
         try {
             EmployeeDto dto = model.searchEmployee(id);
 

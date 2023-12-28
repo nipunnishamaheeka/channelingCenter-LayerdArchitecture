@@ -15,12 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 //import lk.ijse.channelingCenter.model.AppoinmentListModel;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
-import lk.ijse.channelingCenter.dto.MedicineDto;
-import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
-import lk.ijse.channelingCenter.dto.tm.MedicineTm;
-import lk.ijse.channelingCenter.model.AppoinmentModel;
-import lk.ijse.channelingCenter.model.PatientModel;
+import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -47,7 +43,7 @@ public class AppoinmentFromController {
     public TableColumn colDelete;
     public TableColumn colStatus;
 
-    AppoinmentModel appoinmentmodel = new AppoinmentModel();
+    AppoinmentDAOImpl appoinmentmodel = new AppoinmentDAOImpl();
     @SneakyThrows
     public void initialize() {
         setCellValueFactory();
@@ -73,7 +69,7 @@ public class AppoinmentFromController {
         });
     }
 
-    private void loadAllAppoinments() throws SQLException {
+    private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
             List<AppoinmentDto> dtoList = appoinmentmodel.getAllAppoinment();
 
@@ -95,7 +91,11 @@ public class AppoinmentFromController {
                         int selectedIndex = tblAppointment.getSelectionModel().getSelectedIndex();
                         String code = dto.getAppoinment_id(); // Use the code directly from the DTO
 
-                        deleteItem(code);   // Delete item from the database
+                        try {
+                            deleteItem(code);   // Delete item from the database
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
 
                         obList.remove(selectedIndex);   // Delete item from the JFX-Table
                     }
@@ -123,7 +123,7 @@ public class AppoinmentFromController {
         }
     }
 
-    private void deleteItem(String code) {
+    private void deleteItem(String code) throws ClassNotFoundException {
         try {
             boolean isDeleted = appoinmentmodel.deleteAppoinment(code);
             if (isDeleted) {
@@ -149,7 +149,7 @@ public class AppoinmentFromController {
 
     }
 
-    public void btnrefershonAction(MouseEvent mouseEvent) throws SQLException {
+    public void btnrefershonAction(MouseEvent mouseEvent) throws SQLException, ClassNotFoundException {
         loadAllAppoinments();
     }
 }

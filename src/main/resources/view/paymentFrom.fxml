@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -21,16 +22,22 @@
                   <Font name="Arial Bold" size="30.0" />
                </font>
             </Text>
-            <TableView layoutX="114.0" layoutY="128.0" prefHeight="486.0" prefWidth="968.0">
+            <TableView fx:id="tblPayment" layoutX="114.0" layoutY="128.0" prefHeight="486.0" prefWidth="968.0" stylesheets="@../css/mix.css">
                <columns>
                   <TableColumn fx:id="colPaymentId" editable="false" prefWidth="95.0" sortable="false" text="Payment ID" />
-                  <TableColumn fx:id="colTime" prefWidth="75.0" text="Time" />
-                  <TableColumn fx:id="colDate" prefWidth="130.0" text="Date" />
-                  <TableColumn fx:id="colPatientName" prefWidth="150.0" text="Patient Name" />
-                  <TableColumn fx:id="colAmount" prefWidth="150.0" text="Amount" />
-                  <TableColumn fx:id="colPaymethod" prefWidth="250.0" text="Payment Methrod" />
-                  <TableColumn prefWidth="117.0" text="User Action" />
+                  <TableColumn fx:id="colAppoinmentId" prefWidth="94.39999389648438" text="Appoinment ID" />
+                  <TableColumn fx:id="colTime" prefWidth="105.60003662109375" text="Time" />
+                  <TableColumn fx:id="colDate" prefWidth="131.19998168945312" text="Date" />
+                  <TableColumn fx:id="colPatientName" prefWidth="182.39996337890625" text="Patient Name" />
+                  <TableColumn fx:id="colAmount" prefWidth="245.60003662109375" text="Amount" />
+                  <TableColumn fx:id="colAction" prefWidth="117.0" text="User Action" />
                </columns>
+               <styleClass>
+                  <String fx:value="column-header" />
+                  <String fx:value="table-cell" />
+                  <String fx:value="table-row-cell" />
+                  <String fx:value="table-view" />
+               </styleClass>
             </TableView>
             <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" graphicTextGap="2.0" layoutX="1097.0" layoutY="54.0" minHeight="35.0" mnemonicParsing="false" onAction="#btnAddOnAction" prefHeight="40.0" prefWidth="119.0" styleClass="add_button" stylesheets="@../css/button.css" text="Add Pay" textOverrun="CENTER_ELLIPSIS" wrapText="true">
                <font>

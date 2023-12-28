@@ -10,32 +10,23 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.LabReportDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.*;
 import lk.ijse.channelingCenter.dto.tm.LabReportTm;
-import lk.ijse.channelingCenter.dto.tm.MedicineTm;
 import lk.ijse.channelingCenter.email.SendEmail;
-import lk.ijse.channelingCenter.model.*;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -84,7 +75,7 @@ public class LabReportsFromController {
 
     @FXML
     private TableColumn<?, ?> colReportId;
-    LabReportModel labReportModel = new LabReportModel();
+    LabReportDAOImpl labReportDAOImpl = new LabReportDAOImpl();
 
     public void initialize() throws SQLException {
         setLabReportsID();
@@ -96,7 +87,7 @@ public class LabReportsFromController {
 
     private void loadAllReports() throws SQLException {
         try {
-            List<LabReportDto> dtoList = labReportModel.getAllReports();
+            List<LabReportDto> dtoList = labReportDAOImpl.getAll();
 
             ObservableList<LabReportTm> obList = FXCollections.observableArrayList();
 
@@ -156,6 +147,8 @@ public class LabReportsFromController {
             });
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -181,12 +174,14 @@ public class LabReportsFromController {
 
     private void deleteItem(String code) {
         try {
-            boolean isDeleted = labReportModel.deleteReports(code);
+            boolean isDeleted = labReportDAOImpl.delete(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }
         } catch (SQLException ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -208,8 +203,8 @@ public class LabReportsFromController {
                 String Units = txtUnits.getText();
                 String Others = txtOthers.getText();
 
-                LabReportModel labReportModel = new LabReportModel();
-                boolean isSaved = labReportModel.saveLabReport(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
+                LabReportDAOImpl labReportDAOImpl = new LabReportDAOImpl();
+                boolean isSaved = labReportDAOImpl.save(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "User Added Successfully").show();
                     loadAllReports();
@@ -219,6 +214,8 @@ public class LabReportsFromController {
                     new Alert(Alert.AlertType.ERROR, "LabReport not saved!").show();
                 }
             } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -268,10 +265,12 @@ public class LabReportsFromController {
     private void setLabReportsID() {
 
         try {
-            lblReportId.setText(new LabReportModel().autoGenarateLabReportId());
+            lblReportId.setText(new LabReportDAOImpl().generateNextId());
             //tblReport.refresh();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -279,7 +278,7 @@ public class LabReportsFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<PatientDto> cusList = new PatientModel().getAllPatient();
+            List<PatientDto> cusList = new PatientDAOImpl().getAllPatient();
 
             for (PatientDto dto : cusList) {
                 obList.add(dto.getPatient_id());
@@ -288,6 +287,8 @@ public class LabReportsFromController {
             //cmbPatientId.setItems(obList);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -295,7 +296,7 @@ public class LabReportsFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<DoctorDto> cusList = new DoctorModel().getAllDoctor();
+            List<DoctorDto> cusList = new DoctorDAOImpl().getAll();
 
             for (DoctorDto dto : cusList) {
                 obList.add(dto.getId());
@@ -304,22 +305,26 @@ public class LabReportsFromController {
             //cmbPatientId.setItems(obList);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @FXML
     void cmbPatientIdOnAction(ActionEvent event) {
         try {
-            String name = new PatientModel().getPatientName(cmboPationId.getValue());
+            String name = new PatientDAOImpl().getPatientName(cmboPationId.getValue());
             lblPatientName.setText(name);
 
-            String gender = new PatientModel().getPatientGender(cmboPationId.getValue());
+            String gender = new PatientDAOImpl().getPatientGender(cmboPationId.getValue());
             lblGender.setText(gender);
 
-            String age = new PatientModel().getPatientAge(cmboPationId.getValue());
+            String age = new PatientDAOImpl().getPatientAge(cmboPationId.getValue());
             lblAge.setText(age);
 
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -340,7 +345,7 @@ public class LabReportsFromController {
             String Units = txtUnits.getText();
             String Others = txtOthers.getText();
             try {
-                boolean isUpdated = labReportModel.updateLabReport(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
+                boolean isUpdated = labReportDAOImpl.update(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient updated").show();
                     clearFields();
@@ -348,6 +353,8 @@ public class LabReportsFromController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
 
         }
@@ -357,9 +364,9 @@ public class LabReportsFromController {
         clearFields();
     }
 
-    public void cmbDoctorIdOnAction(ActionEvent actionEvent) {
+    public void cmbDoctorIdOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         try {
-            String name = new DoctorModel().getname(cmbDoctor.getValue());
+            String name = new DoctorDAOImpl().getname(cmbDoctor.getValue());
             lblDoctorName.setText(name);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -369,7 +376,7 @@ public class LabReportsFromController {
     public void btnSearchIdOnAction(ActionEvent actionEvent) {
         String id = txtSearchId.getText();
 
-        var model = new LabReportModel();
+        var model = new LabReportDAOImpl();
         try {
             LabReportDto dto = model.searchLabReport(id);
 
@@ -380,13 +387,19 @@ public class LabReportsFromController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
 
     private void fillFields(LabReportDto dto) throws SQLException {
         txtPatientName.setText(dto.getPatient_name());
-        txtEmail.setText(labReportModel.getEmail(dto.getLab_reportid()));
+        try {
+            txtEmail.setText(labReportDAOImpl.getEmail(dto.getLab_reportid()));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setCellValueFactory() {
@@ -433,6 +446,74 @@ public class LabReportsFromController {
         String title = "Lab Report";
         sendMail("Thank you for choosing our service !", "Thank you for choosing our service !.", email);
     }
+
+//    @FXML
+//    void btnEmailOnAction(ActionEvent event) {
+//        String email = txtEmail.getText();
+//        String title = "Lab Report";
+//
+//        // Get the selected item directly from the table
+//        LabReportTm selectedReport = (LabReportTm) tblReport.getSelectionModel().getSelectedItem();
+//
+//        // Check if an item is selected
+//        if (selectedReport != null) {
+//            // Get report details from the selected item
+//            String labReportId = selectedReport.getLab_reportid();
+//            String date = selectedReport.getDate();
+//            String patientName = selectedReport.getPatient_name();
+//            String doctorName = selectedReport.getDoctor_name();
+//            String age = selectedReport.getAge();
+//            String gender = selectedReport.getGender();
+//
+//            // Generate HTML content for the email
+//            String htmlContent = generateHtmlContentForReport(email, labReportId, date, patientName, doctorName, age, gender);
+//
+//            // Send email with HTML content
+//            if (sendMail(title, htmlContent, email)) {
+//                System.out.println("Email sent successfully.");
+//            } else {
+//                System.out.println("Failed to send email.");
+//            }
+//        } else {
+//            // Handle the case where no item is selected in the table
+//            System.out.println("Please select a row from the table.");
+//        }
+//    }
+//
+//    private String generateHtmlContentForReport(String email, String labReportId, String date, String patientName,
+//                                                String doctorName, String age, String gender) {
+//        return "<!DOCTYPE html>\n" +
+//                "<html>\n" +
+//                "<head>\n" +
+//                "    <style>\n" +
+//                "        body {\n" +
+//                "            font-family: Arial, sans-serif;\n" +
+//                "            background-color: #f4f4f4;\n" +
+//                "            text-align: center;\n" +
+//                "        }\n" +
+//                "        .container {\n" +
+//                "            background-color: #ffffff;\n" +
+//                "            padding: 20px;\n" +
+//                "            border-radius: 5px;\n" +
+//                "            box-shadow: 0 0 10px rgba(0,0,0,0.2);\n" +
+//                "            text-align: center;\n" +
+//                "        }\n" +
+//                "    </style>\n" +
+//                "</head>\n" +
+//                "<body>\n" +
+//                "    <div class=\"container\">\n" +
+//                "        <h1>Lab Report Details for " + patientName + "</h1>\n" +
+//                "        <p>Lab Report ID: " + labReportId + "</p>\n" +
+//                "        <p>Date: " + date + "</p>\n" +
+//                "        <p>Patient Name: " + patientName + "</p>\n" +
+//                "        <p>Doctor Name: " + doctorName + "</p>\n" +
+//                "        <p>Age: " + age + "</p>\n" +
+//                "        <p>Gender: " + gender + "</p>\n" +
+//                "        <p>Thank you for choosing our service!</p>\n" +
+//                "    </div>\n" +
+//                "</body>\n" +
+//                "</html>\n";
+//    }
 
     private boolean sendMail(String title,String message,String gmail){
 

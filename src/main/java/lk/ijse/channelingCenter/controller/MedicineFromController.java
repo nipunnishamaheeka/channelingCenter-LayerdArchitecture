@@ -7,23 +7,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
+import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.CompleteOrderDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.MedicineDAOImpl;
 import lk.ijse.channelingCenter.dto.*;
-import lk.ijse.channelingCenter.dto.tm.DoctorTm;
 import lk.ijse.channelingCenter.dto.tm.MedicineTm;
-import lk.ijse.channelingCenter.dto.tm.PatientTm;
-import lk.ijse.channelingCenter.model.*;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -62,14 +55,14 @@ public class MedicineFromController {
 
     @FXML
     private Label totalStock;
-    MedicineModel medicineModel = new MedicineModel();
+    MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
 
-CompleteOrderModel completeOrderModel = new CompleteOrderModel();
-    public void initialize() throws SQLException {
-        completeOrders.setText(completeOrderModel.getAllOrders());
-        pendingOrders.setText(AppoinmentModel.getPendingOrders());
-        totalStock.setText(MedicineModel.getAll());
-        totalOrders.setText(AppoinmentModel.getAll());
+CompleteOrderDAOImpl completeOrderDAOImpl = new CompleteOrderDAOImpl();
+    public void initialize() throws SQLException, ClassNotFoundException {
+        completeOrders.setText(completeOrderDAOImpl.getAllOrders());
+        pendingOrders.setText(AppoinmentDAOImpl.getPendingOrders());
+        totalStock.setText(MedicineDAOImpl.getAll());
+        totalOrders.setText(AppoinmentDAOImpl.getAll());
         loadAllMedicine();
         setMedicineCode();
         setCellValueFactory();
@@ -77,21 +70,6 @@ CompleteOrderModel completeOrderModel = new CompleteOrderModel();
 
     }
 
-//    private void loadSupplierNames() {
-//
-//        ObservableList<String> obList = FXCollections.observableArrayList();
-//        try {
-//            List<SupplierDto> supiList = new SupplierModel().getAllSupplier();
-//
-//            for (SupplierDto dto : supiList) {
-//                obList.add(dto.getSupplier_name());
-//            }
-//            //cmbSupplierName.setItems(obList);
-//            //cmbPatientId.setItems(obList);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 private void loadMedicineTypes() {
     ObservableList<String> obList = FXCollections.observableArrayList();
 
@@ -129,9 +107,11 @@ private void loadMedicineTypes() {
 }
     private void setMedicineCode() {
         try {
-            lblCode.setText(new MedicineModel().autoGenarateMedicineId());
+            lblCode.setText(new MedicineDAOImpl().autoGenarateMedicineId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -148,8 +128,8 @@ private void loadMedicineTypes() {
             MedicineDto itemDto = new MedicineDto(id, medicineName, description, qty, unitPrice);
 
             try {
-                MedicineModel medicineModel = new MedicineModel();
-                boolean isSaved = medicineModel.saveMedicine(itemDto);
+                MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
+                boolean isSaved = medicineDAOImpl.saveMedicine(itemDto);
                 //System.out.println(isSaved);
                 if (isSaved) {
 
@@ -160,6 +140,8 @@ private void loadMedicineTypes() {
                     new Alert(Alert.AlertType.ERROR, "Medicine not saved!").show();
                 }
             } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -205,8 +187,8 @@ private void loadMedicineTypes() {
         MedicineDto itemDto = new MedicineDto(id, medicineName, description, qty, unitPrice);
 
         try {
-            MedicineModel medicineModel = new MedicineModel();
-            boolean isUpdated = medicineModel.updateMedicine(itemDto);
+            MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
+            boolean isUpdated = medicineDAOImpl.updateMedicine(itemDto);
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Medicine updated!").show();
                 clearFields();
@@ -215,6 +197,8 @@ private void loadMedicineTypes() {
                 new Alert(Alert.AlertType.ERROR, "Medicine not updated!").show();
             }
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -240,7 +224,7 @@ private void loadMedicineTypes() {
 
     private void loadAllMedicine() throws SQLException {
         try {
-            List<MedicineDto> dtoList = medicineModel.getAllMedicine();
+            List<MedicineDto> dtoList = medicineDAOImpl.getAllMedicine();
 
             ObservableList<MedicineTm> obList = FXCollections.observableArrayList();
 
@@ -302,17 +286,21 @@ private void loadMedicineTypes() {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void deleteItem(String code) {
         try {
-            boolean isDeleted = medicineModel.deleteMedicine(code);
+            boolean isDeleted = medicineDAOImpl.deleteMedicine(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }
         } catch (SQLException ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -320,7 +308,7 @@ private void loadMedicineTypes() {
         String medicine = txtMedicineName.getText();
 
         try {
-            MedicineDto dto = medicineModel.searchMedicine(medicine);
+            MedicineDto dto = medicineDAOImpl.searchMedicine(medicine);
             if (dto != null) {
                 setFields(dto);
             } else {
@@ -328,6 +316,8 @@ private void loadMedicineTypes() {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

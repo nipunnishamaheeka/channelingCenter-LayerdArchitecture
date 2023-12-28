@@ -9,23 +9,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.dto.tm.PatientTm;
-import lk.ijse.channelingCenter.model.PatientModel;
+import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PatientFromController {
@@ -82,7 +75,7 @@ public class PatientFromController {
     @FXML
     private TableColumn<?, ?> colSex;
 
-    PatientModel patientModel = new PatientModel();
+    PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
 
     private void setCellValueFactory() {
         colPatientID.setCellValueFactory(new PropertyValueFactory<>("patient_id"));
@@ -124,7 +117,7 @@ public class PatientFromController {
         ObservableList<PatientTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PatientDto> dtoList = new PatientModel().getAllPatient();
+            List<PatientDto> dtoList = new PatientDAOImpl().getAllPatient();
 
             for (PatientDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -208,17 +201,21 @@ public class PatientFromController {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void deletePatient(String code) {
         try {
-            boolean b = patientModel.deletePatient(code);
+            boolean b = patientDAOImpl.deletePatient(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -253,7 +250,7 @@ public class PatientFromController {
 
     private boolean validatePatient() {
         return validateTextField(txtName, "[A-Za-z]{3,}")
-                && validateTextField(txtNumber, "[(07)]\\d{9}|[+]\\d{11}")
+                && validateTextField(txtNumber, "^(?:7|0|(?:\\+94))[0-9]{9,10}$")
                 && validateTextField(txtAge, "\\d{2}")
                 && validateTextField(txtEmail, "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}")
                 && validateTextField(txtAddress, "[A-Za-z0-9]{3,}");
@@ -275,8 +272,8 @@ public class PatientFromController {
 
                 PatientDto itemDto = new PatientDto(id, name, number, address, sex, email, age, blood);
 
-                PatientModel patientModel = new PatientModel();
-                boolean isSaved = patientModel.savePatient(itemDto);
+                PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
+                boolean isSaved = patientDAOImpl.savePatient(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -286,6 +283,8 @@ public class PatientFromController {
                     new Alert(Alert.AlertType.ERROR, "Patient not saved!").show();
                 }
             } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -297,7 +296,7 @@ public class PatientFromController {
         String number = txtNumber.getText();
 
         try {
-            PatientDto dto = patientModel.searchNumber(number);
+            PatientDto dto = patientDAOImpl.searchNumber(number);
             if (dto != null) {
                 setFields(dto);
 
@@ -306,6 +305,8 @@ public class PatientFromController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -349,7 +350,7 @@ public class PatientFromController {
             String Age = txtAge.getText();
 
             try {
-                boolean isUpdated = patientModel.updatePatient(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
+                boolean isUpdated = patientDAOImpl.updatePatient(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient updated").show();
                     clearFields();
@@ -357,6 +358,8 @@ public class PatientFromController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
 
         }
@@ -364,9 +367,11 @@ public class PatientFromController {
 
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientModel().autoGenaratePatientId());
+            lblPatientId.setText(new PatientDAOImpl().autoGenaratePatientId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

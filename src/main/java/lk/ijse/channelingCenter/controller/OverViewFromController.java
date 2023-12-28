@@ -3,9 +3,6 @@ package lk.ijse.channelingCenter.controller;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,27 +14,20 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
 import lk.ijse.channelingCenter.dto.tm.DoctorTm;
-import lk.ijse.channelingCenter.model.AppoinmentModel;
-import lk.ijse.channelingCenter.model.DoctorModel;
-import lk.ijse.channelingCenter.model.MedicineModel;
-import lk.ijse.channelingCenter.model.PatientModel;
+import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.MedicineDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -74,62 +64,48 @@ public class OverViewFromController implements Initializable {
     @FXML
     private Label AllDoctors;
 
-    AppoinmentModel appoinmentModel = new AppoinmentModel();
-    DoctorModel doctorModel = new DoctorModel();
-
-
+    AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
+    DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
     @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ApoToday.setText(AppoinmentModel.getToday());
-        patientToday.setText(PatientModel.getAll());
-        doctorToday.setText(DoctorModel.getAll());
-        medicineStock.setText(MedicineModel.getAll());
-        ApoinemntToday.setText(AppoinmentModel.getToday());
-        AllAppoinments.setText(AppoinmentModel.getAll());
-        AllDoctors.setText(DoctorModel.getAll());
-
-        ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList(
-                new PieChart.Data("Acetaminophen", 10),
-                new PieChart.Data("Adderall", 20),
-                new PieChart.Data("Amitriptyline", 30),
-                new PieChart.Data("Amlodiphine", 40),
-                new PieChart.Data("Amoxicillin", 50),
-                new PieChart.Data("Ativan", 100)
-        );
-
-        applyCustomColorSequence(
-                observableList,
-                "green",
-                "black",
-                "chocolate",
-                "red",
-                "blue",
-                "crimson"
-        );
-
-        pieChart.setData(observableList);
-
-        // Set colors for each category individually (optional)
-        // observableList.get(0).getNode().setStyle("-fx-pie-color: #1f77b4;");  // Acetaminophen - Blue
-        // observableList.get(1).getNode().setStyle("-fx-pie-color: #ff7f0e;");  // Adderall - Orange
-        // observableList.get(2).getNode().setStyle("-fx-pie-color: #2ca02c;");  // Amitriptyline - Green
-        // observableList.get(3).getNode().setStyle("-fx-pie-color: #d62728;");  // Amlodiphine - Red
-        // observableList.get(4).getNode().setStyle("-fx-pie-color: #9467bd;");  // Amoxicillin - Purple
-        // observableList.get(5).getNode().setStyle("-fx-pie-color: #8c564b;");  // Ativan - Brown
+        ApoToday.setText(AppoinmentDAOImpl.getToday());
+        patientToday.setText(PatientDAOImpl.getAll());
+        doctorToday.setText(doctorDAOImpl.getCount());
+        medicineStock.setText(MedicineDAOImpl.getAll());
+        ApoinemntToday.setText(AppoinmentDAOImpl.getToday());
+        AllAppoinments.setText(AppoinmentDAOImpl.getAll());
+        AllDoctors.setText(doctorDAOImpl.getCount());
 
         loadAllAppoinments();
         setCellValueFactory();
         loadAllItems();
+        setPieChart();
     }
+private void setPieChart(){
 
-    private void applyCustomColorSequence(ObservableList<PieChart.Data> observableList, String aqua, String pink, String chocolate, String red, String blue, String crimson) {
-    }
+    ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList(
+            new PieChart.Data("Acetaminophen", 10),
+            new PieChart.Data("Adderall", 20),
+            new PieChart.Data("Amitriptyline", 30),
+            new PieChart.Data("Amlodiphine", 40),
+            new PieChart.Data("Amoxicillin", 50),
+            new PieChart.Data("Ativan", 100)
+    );
 
+    pieChart.setData(observableList);
 
+    // Set colors for each category individually (optional)
+    observableList.get(0).getNode().setStyle("-fx-pie-color: #1f77b4;");  // Acetaminophen - Blue
+    observableList.get(1).getNode().setStyle("-fx-pie-color: #ff7f0e;");  // Adderall - Orange
+    observableList.get(2).getNode().setStyle("-fx-pie-color: #2ca02c;");  // Amitriptyline - Green
+    observableList.get(3).getNode().setStyle("-fx-pie-color: #d62728;");  // Amlodiphine - Red
+    observableList.get(4).getNode().setStyle("-fx-pie-color: #9467bd;");  // Amoxicillin - Purple
+    observableList.get(5).getNode().setStyle("-fx-pie-color: #8c564b;");  // Ativan - Brown
+}
     private void loadAllItems() throws SQLException {
         try {
-            List<DoctorDto> dtoList = doctorModel.getAllDoctor();
+            List<DoctorDto> dtoList = doctorDAOImpl.getAll();
 
             ObservableList<DoctorTm> obList = FXCollections.observableArrayList();
 
@@ -149,7 +125,11 @@ public class OverViewFromController implements Initializable {
                         int selectedIndex = tblDoctorList.getSelectionModel().getSelectedIndex();
                         String code = dto.getId(); // Use the code directly from the DTO
 
-                        deleteItem(code);   // Delete item from the database
+                        try {
+                            deleteItem(code);   // Delete item from the database
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
 
                         obList.remove(selectedIndex);   // Delete item from the JFX-Table
                     }
@@ -172,10 +152,12 @@ public class OverViewFromController implements Initializable {
             setFontAwesomeIcons();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void loadAllAppoinments() throws SQLException {
+    private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
             List<AppoinmentDto> dtoList = appoinmentModel.getPendingAppoinemts();
 
@@ -197,7 +179,11 @@ public class OverViewFromController implements Initializable {
                         int selectedIndex = tblBookedAppoinment.getSelectionModel().getSelectedIndex();
                         String code = dto.getAppoinment_id(); // Use the code directly from the DTO
 
-                        deleteItem(code);   // Delete item from the database
+                        try {
+                            deleteItem(code);   // Delete item from the database
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
 
                         obList.remove(selectedIndex);   // Delete item from the JFX-Table
                     }
@@ -234,7 +220,7 @@ public class OverViewFromController implements Initializable {
         });
     }
 
-    private void deleteItem(String code) {
+    private void deleteItem(String code) throws ClassNotFoundException {
         try {
             boolean b = appoinmentModel.deleteAppoinment(code);
             if (b) {
@@ -246,12 +232,14 @@ public class OverViewFromController implements Initializable {
     }
     private void deleteDoctor(String code) {
         try {
-            boolean b = doctorModel.deleteDoctor(code);
+            boolean b = doctorDAOImpl.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private void setCellValueFactory() {

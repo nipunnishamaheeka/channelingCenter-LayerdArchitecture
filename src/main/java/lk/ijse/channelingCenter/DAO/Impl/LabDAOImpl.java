@@ -1,7 +1,6 @@
-package lk.ijse.channelingCenter.model;
+package lk.ijse.channelingCenter.DAO.Impl;
 
 import lk.ijse.channelingCenter.db.DbConnection;
-import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.dto.LabDto;
 
 import java.sql.Connection;
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LabModel {
+public class LabDAOImpl {
     public boolean saveLab(final LabDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 

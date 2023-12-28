@@ -2,10 +2,8 @@ package lk.ijse.channelingCenter.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -14,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.tm.CompleteOrdersTm;
-import lk.ijse.channelingCenter.model.AppoinmentModel;
+import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -23,9 +21,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CompleteOrderFromController {
     @FXML
@@ -46,7 +42,7 @@ public class CompleteOrderFromController {
     @FXML
     private TableView<CompleteOrdersTm> tblMedicine;
 
-    public void initialize() {
+    public void initialize() throws ClassNotFoundException {
         setValueFactories();
         loadCompleteOrders();
     }
@@ -57,8 +53,8 @@ public class CompleteOrderFromController {
         colDocName.setCellValueFactory(new PropertyValueFactory<>("doctorName"));
         colAction.setCellValueFactory(new PropertyValueFactory<>("btn"));
     }
-    private void loadCompleteOrders() {
-        AppoinmentModel appoinmentModel = new AppoinmentModel();
+    private void loadCompleteOrders() throws ClassNotFoundException {
+        AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
         try {
             List<AppoinmentDto> allAppoinment = appoinmentModel.getAllAppoinment();
             ObservableList<CompleteOrdersTm> list = FXCollections.observableArrayList();

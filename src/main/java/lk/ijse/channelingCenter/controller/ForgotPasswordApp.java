@@ -167,7 +167,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.model.LoginModel;
+import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.mail.Multipart;
@@ -184,13 +184,12 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static javax.mail.Message.RecipientType.TO;
 
 public class ForgotPasswordApp {
-    private static final String EMAIL = "travelagentsrilanka1@gmail.com";
+    private static final String EMAIL = "nishamaheeka123@gmail.com";
     private final Gmail service;
     public TextField emailField;
 
@@ -213,7 +212,8 @@ public class ForgotPasswordApp {
 
     @FXML
     private Pane visiblePane;
-static int randNum;
+    static int randNum;
+
     @FXML
     void btnResetOnAction(ActionEvent event) {
         String password = txtpassword.getText();
@@ -232,12 +232,12 @@ static int randNum;
         String email = emailField.getText(); // assuming you have an email field
 
         try {
-            LoginModel loginModel = new LoginModel();
-            LoginDto loginDto = loginModel.getUserByEmail(email);
+            LoginDAOImpl loginDAOImpl = new LoginDAOImpl();
+            LoginDto loginDto = loginDAOImpl.getUserByEmail(email);
 
             if (loginDto != null) {
                 loginDto.setPassword(password);
-                loginModel.updateUser(loginDto);
+                loginDAOImpl.update(loginDto);
 
                 new Alert(Alert.AlertType.CONFIRMATION, "Password has been reset.").show();
             } else {
@@ -246,6 +246,8 @@ static int randNum;
         } catch (SQLException e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to reset password. " + e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -271,9 +273,9 @@ static int randNum;
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static void setEmailCom(String email, int randNum) throws Exception {
-        new ForgotPasswordApp().sendMail("Your, User account reset OTP", generateHtmlContent(email, randNum), email);
-    }
+//    public static void setEmailCom(String email, int randNum) throws Exception {
+//        new ForgotPasswordApp().sendMail("Your, User account reset OTP", generateHtmlContent(email, randNum), email);
+//    }
 
     private static String generateHtmlContent(String email, int randNum) {
         return "<!DOCTYPE html>\n" +
@@ -340,12 +342,15 @@ static int randNum;
         }
     }
 
+    int random = 0;
+
     public void setEmailCom(ActionEvent actionEvent) throws Exception {
         // Generate a random 6-digit OTP
-        int randNum = generateRandomOTP();
+        random = generateRandomOTP();
 
         // Send the generated OTP via email
-        setEmailCom(emailField.getText(), randNum);
+//        setEmailCom(emailField.getText(), randNum);
+        new ForgotPasswordApp().sendMail("Your, User account reset OTP", generateHtmlContent(emailField.getText(), random), emailField.getText());
 
         // Display a confirmation message
         new Alert(Alert.AlertType.INFORMATION, "OTP sent to your email.").show();
@@ -379,29 +384,31 @@ static int randNum;
     @FXML
     void btnVerifiyOtpOnAction(ActionEvent event) {
         boolean isOTPValid = validateOTP();
-        String enteredOTP = String.valueOf(generateRandomOTP()); // Get the entered OTP from the user
-        int expectedOTP = generateRandomOTP(); // Replace with the actual OTP you generated or sent
+        String enteredOTP = String.valueOf(otpTextField.getText()); // Get the entered OTP from the user
+        int expectedOTP = random; // Replace with the actual OTP you generated or sent
+
         if (isOTPValid) {
-            if (expectedOTP == Integer.parseInt(enteredOTP)) {
-                new Alert(Alert.AlertType.INFORMATION, "OTP verified. You can reset your password now.").show();
-                changePasswordVisiblePane.setVisible(true);
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Invalid OTP. Please try again.").show();
-            }
+
+            new Alert(Alert.AlertType.INFORMATION, "OTP verified. You can reset your password now.").show();
+            changePasswordVisiblePane.setVisible(true);
+        } else {
+            new Alert(Alert.AlertType.ERROR, "Invalid OTP. Please try again.").show();
         }
     }
+
     private int generateRandomOTP() {
 
         SecureRandom random = new SecureRandom();
-        int randNum =  100000 + random.nextInt(900000);
+        int randNum = 100000 + random.nextInt(900000);
         System.out.println(randNum);// Generates a 6-digit random number
-    return randNum;
+        return randNum;
     }
 
     private boolean validateOTP() {
-       otpTextField.getText();
-        boolean isNumberValid = CheckOTP();
-        if (!isNumberValid) {
+
+//        boolean isNumberValid = CheckOTP(otpTextField.getText());
+
+        if (!otpTextField.getText().equals(String.valueOf(random))) {
             otpTextField.setStyle("-fx-border-color: red");
             new animatefx.animation.Shake(otpTextField).play();
             return false;
@@ -410,10 +417,13 @@ static int randNum;
         }
         return true;
     }
-    private boolean CheckOTP(){
-        if (generateRandomOTP() == Integer.parseInt(otpTextField.getText())) {
-            return true;
-        }return false;
-    }
+
+//    private boolean CheckOTP(String enteredOTP) {
+////        if (generateRandomOTP() == Integer.parseInt(otpTextField.getText())) {
+//        if (enteredOTP.equals(random)) {
+//            return true;
+//        }
+//        return false;
+//    }
 }
 

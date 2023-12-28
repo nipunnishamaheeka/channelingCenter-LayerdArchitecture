@@ -1,4 +1,4 @@
-package lk.ijse.channelingCenter.model;
+package lk.ijse.channelingCenter.DAO.Impl;
 
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.PaymentDto;
@@ -36,7 +36,7 @@ public class PlaceOrderModel {
 //            return "OR001";
 //        }
 
-    public boolean placeOrder(PlaceOrderDto dto) throws SQLException {
+    public boolean placeOrder(PlaceOrderDto dto) throws SQLException, ClassNotFoundException {
         boolean result = false;
         Connection connection = null;
         try {
@@ -44,17 +44,17 @@ public class PlaceOrderModel {
             connection.setAutoCommit(false);
             System.out.println("connection false ");
             System.out.println(dto.getAppoinment_id());
-            boolean isAppoinmentUpdated = new AppoinmentModel().updateAppoinmentStatus(dto.getAppoinment_id());
+            boolean isAppoinmentUpdated = new AppoinmentDAOImpl().updateAppoinmentStatus(dto.getAppoinment_id());
             if (isAppoinmentUpdated) {
                 System.out.println("appoinmentUpdated");
-                String payId = new PaymentModel().autoGenaratePatientId();
-                boolean isPaid = new PaymentModel().savePayment(new PaymentDto(payId, dto.getDate(), dto.getTime(), dto.getAmount(), dto.getAppoinment_id()));
+                String payId = new PaymentDAOImpl().autoGenaratePatientId();
+                boolean isPaid = new PaymentDAOImpl().savePayment(new PaymentDto(payId, dto.getDate(), dto.getTime(), dto.getAmount(), dto.getAppoinment_id()));
                 if (isPaid) {
                     System.out.println("paymentUpdated");
                     if (!dto.getTmlist().isEmpty()) {
-                        boolean isMediUpdate = new MedicineModel().updateMedicineQty(dto.getTmlist());
+                        boolean isMediUpdate = new MedicineDAOImpl().updateMedicineQty(dto.getTmlist());
                         if (isMediUpdate) {
-                            boolean isOrderSave = new CompleteOrderModel().saveOrder(dto.getAppoinment_id(), dto.getTmlist());
+                            boolean isOrderSave = new CompleteOrderDAOImpl().saveOrder(dto.getAppoinment_id(), dto.getTmlist());
                             if (isOrderSave) {
                                 connection.commit();
                                 result = true;

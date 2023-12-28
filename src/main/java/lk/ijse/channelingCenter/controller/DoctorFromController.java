@@ -13,7 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.DoctorTm;
-import lk.ijse.channelingCenter.model.DoctorModel;
+import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -70,9 +70,9 @@ public class DoctorFromController {
 
     @FXML
     private TextField txtType;
-    DoctorModel doctorModel = new DoctorModel();
+    DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
 
-    public void initialize() throws SQLException {
+    public void initialize() throws SQLException, ClassNotFoundException {
         setCellValueFactory();
         loadAllItems();
         setDoctorID();
@@ -98,7 +98,7 @@ public class DoctorFromController {
         obList.addAll("General Practitioner", "Cardiologist", "Dermatologist", "Endocrinologist", "Gastroenterologist", "Orthopedic Surgeon", "Neurologist", "Obstetrician/Gynecologist (OB/GYN)","Ophthalmologist", "Pediatrician","Psychiatrist","Urologist","Allergist/Immunologist","Anesthesiologist","Colon and Rectal Surgeon","Emergency Medicine Specialist","Hematologist","Infectious Disease Specialist","Medical Geneticist","Nephrologist","Otolaryngologist","Pathologist","Plastic Surgeon","Radiologist","Rheumatologist","Thoracic Surgeon","Urologist","Vascular Surgeon");
         cmbDoctorType.setItems(obList);
     }
-    public void btnSaveOnAction(ActionEvent actionEvent) {
+    public void btnSaveOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         boolean isDoctorValid = validateDoctor();
         if (isDoctorValid) {
             String id = lblDoctorId.getText();
@@ -112,8 +112,8 @@ public class DoctorFromController {
             DoctorDto itemDto = new DoctorDto(id, name, address, email, number, type,fee);
 
             try {
-                DoctorModel doctorModel = new DoctorModel();
-                boolean isSaved = doctorModel.saveDoctor(itemDto);
+                DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
+                boolean isSaved = doctorDAOImpl.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Doctor Saved!", ButtonType.OK).show();
@@ -130,7 +130,7 @@ public class DoctorFromController {
            // new Alert(Alert.AlertType.ERROR, "Invalid Doctor Details", ButtonType.OK).show();
         }
     }
-    public void btnUpdateOnAction(ActionEvent actionEvent) {
+    public void btnUpdateOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         boolean isDoctorValid = validateDoctor();
         String id = lblDoctorId.getText();
         String name = txtName.getText();
@@ -141,10 +141,11 @@ public class DoctorFromController {
         double fee = Double.parseDouble(txtFee.getText());
 
         try {
-            boolean isUpdated = doctorModel.updateDoctor(new DoctorDto(id, name, address, email, number, type, fee));
+            boolean isUpdated = doctorDAOImpl.update(new DoctorDto(id, name, address, email, number, type, fee));
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Doctor updated!").show();
                 clearFields();
+
                 loadAllItems();
             }
         } catch (SQLException e) {
@@ -183,12 +184,12 @@ public class DoctorFromController {
         });
     }
 
-    private void loadAllItems() throws SQLException {
+    private void loadAllItems() throws SQLException, ClassNotFoundException {
 
         ObservableList<DoctorTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<DoctorDto> dtoList = doctorModel.getAllDoctor();
+            List<DoctorDto> dtoList = doctorDAOImpl.getAll();
             for (DoctorDto dto : dtoList) {
                 Button deleteButton = new Button();
                 Button updateButton = new Button();
@@ -207,9 +208,11 @@ public class DoctorFromController {
                         String code = (String) tblId.getCellData(selectedIndex);
                         System.out.println(code);
                         try {
-                            doctorModel.deleteDoctor(code);
+                            doctorDAOImpl.delete(code);
                         } catch (SQLException ex) {
                             System.out.println(ex.getMessage());
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
                         }
                         obList.remove(selectedIndex);
                         tblDoctor.refresh();
@@ -272,14 +275,14 @@ public class DoctorFromController {
         clearFields();
     }
 
-    public void btnRefershOnAction(MouseEvent mouseEvent) throws SQLException {
+    public void btnRefershOnAction(MouseEvent mouseEvent) throws SQLException, ClassNotFoundException {
         setDoctorID();
         loadAllItems();
     }
 
-    private void setDoctorID() {
+    private void setDoctorID() throws ClassNotFoundException {
         try {
-            lblDoctorId.setText(new DoctorModel().autoGenarateDoctorId());
+            lblDoctorId.setText(new DoctorDAOImpl().generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -301,7 +304,7 @@ public class DoctorFromController {
             return false;
         }
         String numberText = txtNumber.getText();
-        boolean isNumberValid = Pattern.compile("[07]\\d{9}").matcher(numberText).matches();
+        boolean isNumberValid = Pattern.compile("^(?:7|0|(?:\\+94))[0-9]{9,10}$").matcher(numberText).matches();
         if (!isNumberValid) {
             txtNumber.setStyle("-fx-border-color: red");
             new animatefx.animation.Shake(txtNumber).play();
@@ -311,10 +314,10 @@ public class DoctorFromController {
 
     }
 
-    public void mobileNumberSearchOnAction(ActionEvent actionEvent) {
+    public void mobileNumberSearchOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String number = txtNumber.getText();
         try {
-            DoctorDto dto = doctorModel.searchDoctorByNumber(number);
+            DoctorDto dto = doctorDAOImpl.getDetailByContact(number);
             setFields(dto);
         } catch (SQLException e) {
             e.printStackTrace();

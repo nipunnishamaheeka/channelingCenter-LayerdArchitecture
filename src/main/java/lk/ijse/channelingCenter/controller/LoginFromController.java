@@ -14,9 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.model.LoginModel;
+import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,22 +37,30 @@ public class LoginFromController {
 
         String userName = txtUsername.getText();
         String password = textpassword.getText();
-        LoginModel model = new LoginModel();
-        try {
-            boolean isIn= model.searchUser(new LoginDto(null,userName,password,null));
-            if (!isIn){
-                new Alert(Alert.AlertType.WARNING,"Invalid User Name or Password");
-                textpassword.setStyle("-fx-border-color: red");
-                new animatefx.animation.Shake(textpassword).play();;
+        LoginDAOImpl model = new LoginDAOImpl();
 
-                return;
-            }else  {
-                navigateToMainWindow();
-            }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
-        }
+        System.out.println(txtUsername.getText().isEmpty());
+      if (!txtUsername.getText().isEmpty()){
+          try {
+              boolean isIn= model.searchUser(new LoginDto(null,userName,password,null));
+              if (!isIn){
+                  new Alert(Alert.AlertType.WARNING,"Invalid User Name or Password");
+                  textpassword.setStyle("-fx-border-color: red");
+                  new animatefx.animation.Shake(textpassword).play();;
+
+                  return;
+              }else  {
+                  navigateToMainWindow();
+              }
+          } catch (SQLException e) {
+              new Alert(Alert.AlertType.ERROR,e.getMessage()).show();} catch (ClassNotFoundException e) {
+              throw new RuntimeException(e);
+          }
+      }else{
+          new Alert(Alert.AlertType.WARNING,"Enter Your UserName");
+      }
     }
+
     @FXML
     void txtForgotOnAction(MouseEvent event) throws IOException {
         AnchorPane rootNode = FXMLLoader.load(this.getClass().getResource("/view/forgotPasswordFrom.fxml"));

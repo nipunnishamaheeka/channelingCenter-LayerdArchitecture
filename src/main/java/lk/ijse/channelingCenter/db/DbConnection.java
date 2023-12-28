@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class  DbConnection {
     private static DbConnection dbconnection;
@@ -21,15 +22,20 @@ public class  DbConnection {
     }
 
     public static DbConnection getInstance() throws SQLException {
-        if (dbconnection == null) {
+        if (Objects.isNull(dbconnection)) {
             dbconnection = new DbConnection();
             return dbconnection;
-        } else {
+        }else{
             return dbconnection;
         }
+
+    }
+    public static DbConnection getDbConnection() throws SQLException, ClassNotFoundException {
+        return dbconnection == null ? dbconnection= new DbConnection() : dbconnection;
     }
 
-//    public Connection getConnection(){
-//        return connection;
-//    }
+    public Connection getConnection() {
+        return connection;
+    }
+
 }

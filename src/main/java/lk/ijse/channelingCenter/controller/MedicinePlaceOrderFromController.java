@@ -19,11 +19,10 @@ import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.MedicineDto;
 import lk.ijse.channelingCenter.dto.PlaceOrderDto;
 import lk.ijse.channelingCenter.dto.tm.CartTm;
-import lk.ijse.channelingCenter.model.AppoinmentModel;
-import lk.ijse.channelingCenter.model.DoctorModel;
-import lk.ijse.channelingCenter.model.MedicineModel;
-import lk.ijse.channelingCenter.model.PlaceOrderModel;
-import lombok.SneakyThrows;
+import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.MedicineDAOImpl;
+import lk.ijse.channelingCenter.DAO.Impl.PlaceOrderModel;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -63,7 +62,7 @@ public class MedicinePlaceOrderFromController {
     public TableColumn colAction;
     public Pane cartPane;
     public Pane placeOrder;
-    AppoinmentModel appoinmentModel = new AppoinmentModel();
+    AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
 
     public void initialize() {
         //setOrderId();
@@ -86,7 +85,7 @@ public class MedicinePlaceOrderFromController {
         }*/
     }
 
-    public void btnSearchAppoinmentIDOnAction(ActionEvent actionEvent) {
+    public void btnSearchAppoinmentIDOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String id = txtAppointmentID.getText();
 
         try {
@@ -97,7 +96,7 @@ public class MedicinePlaceOrderFromController {
                 cartPane.setVisible(true);
                 lblPatientName.setText(dto.getPatinetName());
                 lblDoctorName.setText(dto.getDoctor_name());
-                value = new DoctorModel().getfee(dto.getId());
+                value = new DoctorDAOImpl().getfee(dto.getId());
                 calculateNetTotal();
             } else {
                 new Alert(Alert.AlertType.INFORMATION, "Appoinemnt ID not found!").show();
@@ -117,7 +116,7 @@ public class MedicinePlaceOrderFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<MedicineDto> cusList = new MedicineModel().getAllMedicine();
+            List<MedicineDto> cusList = new MedicineDAOImpl().getAllMedicine();
 
             for (MedicineDto dto : cusList) {
                 obList.add(dto.getMedi_code());
@@ -126,6 +125,8 @@ public class MedicinePlaceOrderFromController {
             //cmbPatientId.setItems(obList);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -133,11 +134,13 @@ public class MedicinePlaceOrderFromController {
     void cmbMedicineOnAction(ActionEvent event) {
         try {
 
-            MedicineDto dto = new MedicineModel().searchMedicine(cmbMedicineId.getValue());
+            MedicineDto dto = new MedicineDAOImpl().searchMedicine(cmbMedicineId.getValue());
             lblDescription.setText(dto.getDescription());
             //String price = new MedicineModel().getMedicinePrice(cmbMedicineId.getValue());
             lblUnitPrice.setText(dto.getUnit_price());
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -152,7 +155,12 @@ public class MedicinePlaceOrderFromController {
         double unitPrice = Double.parseDouble(lblUnitPrice.getText());
         double total = qty * unitPrice;
 
-        int qtyOnHand = new MedicineModel().getQty(code);
+        int qtyOnHand = 0;
+        try {
+            qtyOnHand = new MedicineDAOImpl().getQty(code);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         if (qty < qtyOnHand) {
 
@@ -232,7 +240,7 @@ public class MedicinePlaceOrderFromController {
     }
 
     @FXML
-    public void btnPlaceOrderOnAction(ActionEvent actionEvent) throws SQLException {
+    public void btnPlaceOrderOnAction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
         String appoinmentId = txtAppointmentID.getText();
         Date date = Date.valueOf(LocalDate.now());
         Time time = Time.valueOf(LocalTime.now());
@@ -260,7 +268,7 @@ public class MedicinePlaceOrderFromController {
 
     public void btnBackOnAction(ActionEvent actionEvent) throws IOException {
         medicinePlaceOrderPane.getChildren().clear();
-        medicinePlaceOrderPane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/view/medicinePlaceOrder.fxml")));
+        medicinePlaceOrderPane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/paymentFrom.fxml")));
     }
 
     public void btnCompleteOrdersOnAction(ActionEvent actionEvent) throws IOException {
@@ -270,7 +278,7 @@ public class MedicinePlaceOrderFromController {
         Scene scene = new Scene(rootNode);
         Stage stage  = new Stage();
         stage.setScene(scene);
-        stage.setTitle("addAppoinmentFrom");
+        stage.setTitle("CompleteOrder");
         stage.centerOnScreen();
         stage.show();
 

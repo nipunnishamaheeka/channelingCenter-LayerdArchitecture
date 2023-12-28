@@ -1,5 +1,6 @@
 package lk.ijse.channelingCenter.controller;
 
+import animatefx.animation.Shake;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,10 +13,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.model.LoginModel;
+import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class CreateAccountFromController {
     @FXML
@@ -45,29 +47,59 @@ public class CreateAccountFromController {
         Stage stage1 = (Stage) createAccountPane.getScene().getWindow();
         stage1.close();
     }
+    private boolean validateTextField(TextField textField, String patternRegex) {
+        String text = textField.getText();
+        boolean isValid = Pattern.compile(patternRegex).matcher(text).matches();
 
-    @FXML
-    void btncreateYourAccountOnAction(ActionEvent event) throws IOException {
-        String fullname = txtFullname.getText();
-        String username = txtUsername.getText();
-        String password = txtpassword.getText();
-        String email = txtEmail.getText();
-
-        LoginModel loginModel = new LoginModel();
-        if (password.equals(txtConfromPassword.getText())) {
-
-            try {
-                boolean isSaved = loginModel.saveUser(new LoginDto(fullname, username, password,email));
-                if (isSaved) {
-                    new Alert(Alert.AlertType.CONFIRMATION, "User Added Successfully").show();
-                    return;
-                }
-            } catch (SQLException e) {
-                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-            }
+        if (!isValid) {
+            textField.setStyle("-fx-border-color: red");
+            new Shake(textField).play();
+            return false;
         } else {
-            new Alert(Alert.AlertType.ERROR, "Password Not Matched").show();
+            textField.setStyle("-fx-border-color: green");
+            return true;
         }
+    }
+
+    private boolean validatePassword() {
+        return validateTextField(txtFullname, "^[A-Za-z\\s]{3,50}$")
+                && validateTextField(txtUsername, "^[A-Za-z\\s]{3,50}$")
+                && validateTextField(txtEmail, "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}")
+                && validateTextField(txtpassword, "\\d{2,}");
+
 
     }
+    @FXML
+    void btncreateYourAccountOnAction(ActionEvent event) throws IOException {
+        boolean isPasswordValid = validatePassword();
+        if (isPasswordValid) {
+            try {
+                String fullname = txtFullname.getText();
+                String username = txtUsername.getText();
+                String password = txtpassword.getText();
+                String email = txtEmail.getText();
+
+                LoginDAOImpl loginDAOImpl = new LoginDAOImpl();
+                if (password.equals(txtConfromPassword.getText())) {
+
+                    try {
+                        boolean isSaved = loginDAOImpl.save(new LoginDto(fullname, username, password, email));
+                        if (isSaved) {
+                            new Alert(Alert.AlertType.CONFIRMATION, "User Added Successfully").show();
+                            return;
+                        }
+                    } catch (SQLException e) {
+                        new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                    }
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Password Not Matched").show();
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
 }

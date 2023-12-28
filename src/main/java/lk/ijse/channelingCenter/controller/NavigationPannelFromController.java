@@ -16,7 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lk.ijse.channelingCenter.dto.PatientDto;
-import lk.ijse.channelingCenter.model.PatientModel;
+import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.io.IOException;
 import java.net.URL;
@@ -100,7 +100,7 @@ public class NavigationPannelFromController implements Initializable {
 
     public void btnPaymentOnAction(MouseEvent mouseEvent) throws IOException {
         navigationPane.getChildren().clear();
-        navigationPane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/medicinePlaceOrder.fxml")));
+        navigationPane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/paymentFrom.fxml")));
 
     }
     /*-----DATE AND TIME GENERATE------*/
@@ -126,7 +126,7 @@ public class NavigationPannelFromController implements Initializable {
     public void searchOnAction(ActionEvent actionEvent) {
         String id = idSearch.getText();
 
-        var model = new PatientModel();
+        var model = new PatientDAOImpl();
         try {
             PatientDto dto = model.searchPatient(id);
 
@@ -137,6 +137,8 @@ public class NavigationPannelFromController implements Initializable {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

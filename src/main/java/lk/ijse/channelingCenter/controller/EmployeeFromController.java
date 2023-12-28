@@ -13,7 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.dto.tm.EmployeeTm;
-import lk.ijse.channelingCenter.model.EmployeeModel;
+import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -53,7 +53,7 @@ public class EmployeeFromController {
     @FXML
     private TableColumn<?, ?> colDelete;
 
-      EmployeeModel employeeModel = new EmployeeModel();
+      EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
 
 
     public void btnaddemployeeOnAction() throws IOException {
@@ -62,7 +62,11 @@ public class EmployeeFromController {
     }
 public void initialize() {
     setCellValueFactory();
-    loadAllEmployees();
+    try {
+        loadAllEmployees();
+    } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
+    }
     setFontAwesomeIcons();
 }
     private void setCellValueFactory() {
@@ -90,13 +94,13 @@ public void initialize() {
         });
     }
 
-    private void loadAllEmployees() {
+    private void loadAllEmployees() throws ClassNotFoundException {
 
 
         ObservableList<EmployeeTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<EmployeeDto> dtoList = employeeModel.getAllEmployee();
+            List<EmployeeDto> dtoList = employeeModel.getAll();
 
             for(EmployeeDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -116,7 +120,11 @@ public void initialize() {
                         System.out.println("awa");
                         String code = (String) colId.getCellData(selectedIndex);
                         System.out.println(code);
-                        deleteEmployee(code);
+                        try {
+                            deleteEmployee(code);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         obList.remove(selectedIndex);
                         tblEmployeeView.refresh();
                     }
@@ -156,9 +164,9 @@ public void initialize() {
         }
     }
 
-    private void deleteEmployee(String code) {
+    private void deleteEmployee(String code) throws ClassNotFoundException {
         try {
-            boolean b = employeeModel.deleteEmployee(code);
+            boolean b = employeeModel.delete(code);
             if (b){
 //                new Alert(Alert.AlertType.CONFIRMATION,"Deleted").show();
             }
@@ -168,13 +176,17 @@ public void initialize() {
 
     }
 
-    private void refreshTable() {
+    private void refreshTable() throws ClassNotFoundException {
         loadAllEmployees();
 
     }
 
     public void btnRefreshOnAction(MouseEvent mouseEvent) {
-        loadAllEmployees();
+        try {
+            loadAllEmployees();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

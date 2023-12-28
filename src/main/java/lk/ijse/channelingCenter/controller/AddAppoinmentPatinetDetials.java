@@ -4,17 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
-import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.dto.PatientDto;
-import lk.ijse.channelingCenter.model.EmployeeModel;
-import lk.ijse.channelingCenter.model.PatientModel;
+import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddAppoinmentPatinetDetials {
-    private final PatientModel patientModel = new PatientModel();
+    private final PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
     public Label lblPatientId;
     public TextField txtAge;
     public TextField txtMail;
@@ -59,8 +57,8 @@ public class AddAppoinmentPatinetDetials {
             PatientDto itemDto = new PatientDto(id, name, number, address, sex, email, age,blood);
 
             try {
-                PatientModel patientModel = new PatientModel();
-                boolean isSaved = patientModel.savePatient(itemDto);
+                PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
+                boolean isSaved = patientDAOImpl.savePatient(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -72,6 +70,8 @@ public class AddAppoinmentPatinetDetials {
                     new Alert(Alert.AlertType.ERROR, "Patient not saved!").show();
                 }
             } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -103,9 +103,11 @@ public class AddAppoinmentPatinetDetials {
     }
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientModel().autoGenaratePatientId());
+            lblPatientId.setText(new PatientDAOImpl().autoGenaratePatientId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private boolean validatePatinet() {
@@ -127,7 +129,7 @@ public class AddAppoinmentPatinetDetials {
             return false;
         }
         String numberText = txtNumber.getText();
-        boolean isNumberValid = Pattern.compile("[(07)]\\d{9}|[+]\\d{11}").matcher(numberText).matches();
+        boolean isNumberValid = Pattern.compile(" ^(?:7|0|(?:\\+94))[0-9]{9,10}$").matcher(numberText).matches();
         if (!isNumberValid) {
             txtNumber.setStyle("-fx-border-color: red");
             new animatefx.animation.Shake(txtNumber).play();
