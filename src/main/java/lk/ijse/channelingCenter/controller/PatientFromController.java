@@ -12,6 +12,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
+import lk.ijse.channelingCenter.BO.PatientBO;
 import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.dto.tm.PatientTm;
 import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
@@ -28,7 +30,7 @@ public class PatientFromController {
     public TableColumn colAddress;
     public TextField txtID;
     public TextField txtPatientId;
-    public ComboBox<String>  cmbGender;
+    public ComboBox<String> cmbGender;
     @FXML
     private TextField txtAddress;
     @FXML
@@ -76,6 +78,7 @@ public class PatientFromController {
     private TableColumn<?, ?> colSex;
 
     PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
+    private PatientBO patientBO = new PatientBOImpl();
 
     private void setCellValueFactory() {
         colPatientID.setCellValueFactory(new PropertyValueFactory<>("patient_id"));
@@ -198,7 +201,7 @@ public class PatientFromController {
 
     private void deletePatient(String code) {
         try {
-            boolean b = patientDAOImpl.delete(code);
+            boolean b = patientBO.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }
@@ -224,6 +227,7 @@ public class PatientFromController {
         cmbBlood.setItems(null);
 
     }
+
     private boolean validateTextField(TextField textField, String patternRegex) {
         String text = textField.getText();
         boolean isValid = Pattern.compile(patternRegex).matcher(text).matches();
@@ -262,8 +266,7 @@ public class PatientFromController {
 
                 PatientDto itemDto = new PatientDto(id, name, number, address, sex, email, age, blood);
 
-                PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
-                boolean isSaved = patientDAOImpl.save(itemDto);
+                boolean isSaved = patientBO.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -286,7 +289,7 @@ public class PatientFromController {
         String number = txtNumber.getText();
 
         try {
-            PatientDto dto = patientDAOImpl.getDetailByContact(number);
+            PatientDto dto = patientBO.getDetailByContact(number);
             if (dto != null) {
                 setFields(dto);
 
@@ -308,7 +311,7 @@ public class PatientFromController {
         txtAddress.setText(dto.getAddress());
         cmbGender.setValue(dto.getSex());
         txtEmail.setText(dto.getEmail());
-       cmbBlood.setValue(dto.getBlood());
+        cmbBlood.setValue(dto.getBlood());
         txtAge.setText(dto.getAge());
     }
 
@@ -340,7 +343,7 @@ public class PatientFromController {
             String Age = txtAge.getText();
 
             try {
-                boolean isUpdated = patientDAOImpl.update(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
+                boolean isUpdated = patientBO.update(new PatientDto(Patient_id, Patient_name, Mobile_number, Address, Gender, Email, Blood, Age));
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient updated").show();
                     clearFields();
@@ -366,7 +369,6 @@ public class PatientFromController {
     }
 
     public void cmbBloodGroupOnAction(ActionEvent actionEvent) {
-
     }
 
 }

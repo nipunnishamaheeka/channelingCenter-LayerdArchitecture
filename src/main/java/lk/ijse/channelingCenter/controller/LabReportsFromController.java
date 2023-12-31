@@ -11,6 +11,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.Impl.LabReportBOImpl;
+import lk.ijse.channelingCenter.BO.LabReportBO;
 import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
 import lk.ijse.channelingCenter.DAO.Impl.LabReportDAOImpl;
 import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
@@ -76,6 +78,7 @@ public class LabReportsFromController {
     @FXML
     private TableColumn<?, ?> colReportId;
     LabReportDAOImpl labReportDAOImpl = new LabReportDAOImpl();
+    private LabReportBO labReportBO = new LabReportBOImpl();
 
     public void initialize() throws SQLException {
         setLabReportsID();
@@ -87,7 +90,7 @@ public class LabReportsFromController {
 
     private void loadAllReports() throws SQLException {
         try {
-            List<LabReportDto> dtoList = labReportDAOImpl.getAll();
+            List<LabReportDto> dtoList = labReportBO.getAll();
 
             ObservableList<LabReportTm> obList = FXCollections.observableArrayList();
 
@@ -174,7 +177,7 @@ public class LabReportsFromController {
 
     private void deleteItem(String code) {
         try {
-            boolean isDeleted = labReportDAOImpl.delete(code);
+            boolean isDeleted = labReportBO.delete(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }
@@ -203,8 +206,8 @@ public class LabReportsFromController {
                 String Units = txtUnits.getText();
                 String Others = txtOthers.getText();
 
-                LabReportDAOImpl labReportDAOImpl = new LabReportDAOImpl();
-                boolean isSaved = labReportDAOImpl.save(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
+
+                boolean isSaved = labReportBO.save(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "User Added Successfully").show();
                     loadAllReports();
@@ -345,7 +348,7 @@ public class LabReportsFromController {
             String Units = txtUnits.getText();
             String Others = txtOthers.getText();
             try {
-                boolean isUpdated = labReportDAOImpl.update(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
+                boolean isUpdated = labReportBO.update(new LabReportDto(id, PatientId, Date, DId, DName, Age, Gender, PName, TestName, TestResult, Units, Others));
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient updated").show();
                     clearFields();
@@ -434,6 +437,7 @@ public class LabReportsFromController {
     public void btnPrintReportOnAction(ActionEvent actionEvent) throws JRException, SQLException {
         ReportbtnOnActhion();
     }
+
     private void exportReportToPDF(JasperPrint jasperPrint, String outputFileName) throws JRException {
         JasperExportManager.exportReportToPdfFile(jasperPrint, outputFileName);
         System.out.println("Report exported to PDF: " + outputFileName);
@@ -447,250 +451,15 @@ public class LabReportsFromController {
         sendMail("Thank you for choosing our service !", "Thank you for choosing our service !.", email);
     }
 
-//    @FXML
-//    void btnEmailOnAction(ActionEvent event) {
-//        String email = txtEmail.getText();
-//        String title = "Lab Report";
-//
-//        // Get the selected item directly from the table
-//        LabReportTm selectedReport = (LabReportTm) tblReport.getSelectionModel().getSelectedItem();
-//
-//        // Check if an item is selected
-//        if (selectedReport != null) {
-//            // Get report details from the selected item
-//            String labReportId = selectedReport.getLab_reportid();
-//            String date = selectedReport.getDate();
-//            String patientName = selectedReport.getPatient_name();
-//            String doctorName = selectedReport.getDoctor_name();
-//            String age = selectedReport.getAge();
-//            String gender = selectedReport.getGender();
-//
-//            // Generate HTML content for the email
-//            String htmlContent = generateHtmlContentForReport(email, labReportId, date, patientName, doctorName, age, gender);
-//
-//            // Send email with HTML content
-//            if (sendMail(title, htmlContent, email)) {
-//                System.out.println("Email sent successfully.");
-//            } else {
-//                System.out.println("Failed to send email.");
-//            }
-//        } else {
-//            // Handle the case where no item is selected in the table
-//            System.out.println("Please select a row from the table.");
-//        }
-//    }
-//
-//    private String generateHtmlContentForReport(String email, String labReportId, String date, String patientName,
-//                                                String doctorName, String age, String gender) {
-//        return "<!DOCTYPE html>\n" +
-//                "<html>\n" +
-//                "<head>\n" +
-//                "    <style>\n" +
-//                "        body {\n" +
-//                "            font-family: Arial, sans-serif;\n" +
-//                "            background-color: #f4f4f4;\n" +
-//                "            text-align: center;\n" +
-//                "        }\n" +
-//                "        .container {\n" +
-//                "            background-color: #ffffff;\n" +
-//                "            padding: 20px;\n" +
-//                "            border-radius: 5px;\n" +
-//                "            box-shadow: 0 0 10px rgba(0,0,0,0.2);\n" +
-//                "            text-align: center;\n" +
-//                "        }\n" +
-//                "    </style>\n" +
-//                "</head>\n" +
-//                "<body>\n" +
-//                "    <div class=\"container\">\n" +
-//                "        <h1>Lab Report Details for " + patientName + "</h1>\n" +
-//                "        <p>Lab Report ID: " + labReportId + "</p>\n" +
-//                "        <p>Date: " + date + "</p>\n" +
-//                "        <p>Patient Name: " + patientName + "</p>\n" +
-//                "        <p>Doctor Name: " + doctorName + "</p>\n" +
-//                "        <p>Age: " + age + "</p>\n" +
-//                "        <p>Gender: " + gender + "</p>\n" +
-//                "        <p>Thank you for choosing our service!</p>\n" +
-//                "    </div>\n" +
-//                "</body>\n" +
-//                "</html>\n";
-//    }
+    private boolean sendMail(String title, String message, String gmail) {
 
-    private boolean sendMail(String title,String message,String gmail){
-
-        System.out.println(title+" "+message+" "+gmail);
+        System.out.println(title + " " + message + " " + gmail);
         try {
-            new SendEmail().sendMail(title,message,gmail);
+            new SendEmail().sendMail(title, message, gmail);
             return true;
         } catch (IOException | MessagingException | GeneralSecurityException e) {
             e.printStackTrace();
             return false;
         }
     }
-//void ReportbtnOnActhion() throws JRException, SQLException {
-//    InputStream resourceAsStream = getClass().getResourceAsStream("/Reports/LabReport.jrxml");
-//    JasperDesign load = JRXmlLoader.load(resourceAsStream);
-//    JRDesignQuery jrDesignQuery = new JRDesignQuery();
-//    jrDesignQuery.setText("SELECT * FROM labreport WHERE lab_reportId = " + "\"" + txtSearchId.getText() + "\"");
-//    load.setQuery(jrDesignQuery);
-//
-//    JasperReport jasperReport = JasperCompileManager.compileReport(load);
-//    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, DbConnection.getInstance().getConnection());
-//
-//    // Optionally, export to PDF after viewing the report
-//    String outputFileName = "output.pdf";
-//    exportReportToPDF(jasperPrint, outputFileName);
-//
-//    // Send email with the attached PDF
-//    String email = txtEmail.getText();
-//    String title = "Lab Report";
-//    String message = "Thank you for choosing our service!";
-//
-//    if (sendMailWithAttachment(title, message, email, outputFileName)) {
-//        System.out.println("Email sent successfully.");
-//    } else {
-//        System.out.println("Failed to send email.");
-//    }
-//
-//    JasperViewer.viewReport(jasperPrint, false);
-//}
-//
-//    public void btnPrintReportOnAction(ActionEvent actionEvent) throws JRException, SQLException {
-//        ReportbtnOnActhion();
-//    }
-//
-//    private void exportReportToPDF(JasperPrint jasperPrint, String outputFileName) throws JRException {
-//        JasperExportManager.exportReportToPdfFile(jasperPrint, outputFileName);
-//        System.out.println("Report exported to PDF: " + outputFileName);
-//    }
-//
-//    private boolean sendMailWithAttachment(String subject, String body, String toEmail, String attachmentPath) {
-//        try {
-//            // Setup mail server properties
-//            java.util.Properties properties = new java.util.Properties();
-//            properties.put("mail.smtp.host", "your_smtp_server");
-//            properties.put("mail.smtp.port", "your_smtp_port");
-//            properties.put("mail.smtp.auth", "true");
-//            properties.put("mail.smtp.starttls.enable", "true");
-//
-//            // Get the Session object
-//            Session session = Session.getInstance(properties, new Authenticator() {
-//                protected PasswordAuthentication getPasswordAuthentication() {
-//                    return new PasswordAuthentication("your_email@gmail.com", "your_email_ password");
-//                }
-//            });
-//
-//            // Create a default MimeMessage object
-//            MimeMessage message = new MimeMessage(session);
-//
-//            // Set From: header field
-//            message.setFrom(new InternetAddress("your_email@gmail.com"));
-//
-//            // Set To: header field
-//            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-//
-//            // Set Subject: header field
-//            message.setSubject(subject);
-//
-//            // Create the message part
-//            BodyPart messageBodyPart = new MimeBodyPart();
-//
-//            // Set the actual message
-//            messageBodyPart.setText(body);
-//
-//            // Create a multipart message
-//            Multipart multipart = new MimeMultipart();
-//
-//            // Attach the message part
-//            multipart.addBodyPart(messageBodyPart);
-//
-//            // Attach the file as dataHandler
-//            messageBodyPart = new MimeBodyPart();
-//            DataSource source = (DataSource) new FileDataSource(attachmentPath);
-//            messageBodyPart.setDataHandler(new DataHandler((javax.activation.DataSource) source));
-//            messageBodyPart.setFileName("LabReport.pdf");  // Set the filename for the attachment
-//            multipart.addBodyPart(messageBodyPart);
-//
-//            // Set the complete message parts
-//            message.setContent(multipart);
-//
-//            // Send the message
-//            Transport.send(message);
-//
-//            return true;
-//
-//        } catch (MessagingException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-//    void ReportbtnOnActhion() throws JRException, SQLException {
-//        InputStream resourceAsStream = getClass().getResourceAsStream("/Reports/LabReport.jrxml");
-//        JasperDesign load = JRXmlLoader.load(resourceAsStream);
-//        JRDesignQuery jrDesignQuery = new JRDesignQuery();
-//        jrDesignQuery.setText("SELECT * FROM labreport WHERE lab_reportId = " + "\"" + txtSearchId.getText() + "\"");
-//        load.setQuery(jrDesignQuery);
-//
-//        JasperReport jasperReport = JasperCompileManager.compileReport(load);
-//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, DbConnection.getInstance().getConnection());
-//
-//        // Optionally, export to PDF after viewing the report
-//        String outputFileName = "output.pdf";
-//        exportReportToPDF(jasperPrint, outputFileName);
-//
-//        // Send email with the attached PDF
-//        String email = txtEmail.getText();
-//        String title = "Lab Report";
-//        String message = "Thank you for choosing our service!";
-//
-//        if (sendMailWithAttachment(title, message, email, outputFileName,  message)) {
-//            System.out.println("Email sent successfully.");
-//        } else {
-//            System.out.println("Failed to send email.");
-//        }
-//
-//    }
-//
-//    private void exportReportToPDF(JasperPrint jasperPrint, String outputFileName) throws JRException {
-//        JasperExportManager.exportReportToPdfFile(jasperPrint, outputFileName);
-//        System.out.println("Report exported to PDF: " + outputFileName);
-//    }
-//
-//    @FXML
-//    void btnEmailOnAction(ActionEvent event) {
-//        try {
-//            ReportbtnOnActhion();
-//        } catch (JRException | SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private boolean sendMailWithAttachment(String subject, String body, String toEmail, String attachmentPath, MimeMessage message) {
-//        try {
-//            // ... your existing code ...
-//
-//            // Create the message part for attachment
-//            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-//            FileDataSource source = new FileDataSource(attachmentPath);
-//            attachmentBodyPart.setDataHandler(new DataHandler(source));
-//            attachmentBodyPart.setFileName("LabReport.pdf");  // Set the filename for the attachment
-//
-//            // Create a multipart message for the email body and attachment
-//            Multipart multipart = new MimeMultipart();
-//            multipart.addBodyPart(attachmentBodyPart);
-//
-//            // Set the complete message parts
-//            message.setContent(multipart);
-//
-//            // Send the message
-//            Transport.send(message);
-//
-//            return true;
-//
-//        } catch (MessagingException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
-
 }

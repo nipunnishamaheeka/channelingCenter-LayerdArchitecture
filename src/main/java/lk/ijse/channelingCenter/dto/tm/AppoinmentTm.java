@@ -12,7 +12,7 @@ import java.awt.*;
 @ToString
 @EqualsAndHashCode
 
-public class AppoinmentTm {
+public class AppoinmentTm implements Comparable<AppoinmentTm> {
     private String appoinment_id;
     private String date;
     private String patient_id;
@@ -22,6 +22,11 @@ public class AppoinmentTm {
     private String patientName;
     private String status;
     private Button deleteButton;
+
+    @Override
+    public int compareTo(AppoinmentTm o) {
+        return appoinment_id.compareTo(o.getAppoinment_id());
+    }
 
 //    private javafx.scene.control.Button deleteButton;
 //    private javafx.scene.control.Button updateButton;

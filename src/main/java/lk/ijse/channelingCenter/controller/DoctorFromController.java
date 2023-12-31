@@ -11,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.DoctorBO;
+import lk.ijse.channelingCenter.BO.Impl.DoctorBOImpl;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.DoctorTm;
 import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
@@ -71,6 +73,7 @@ public class DoctorFromController {
     @FXML
     private TextField txtType;
     DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
+    private DoctorBO doctorBO = new DoctorBOImpl();
 
     public void initialize() throws SQLException, ClassNotFoundException {
         setCellValueFactory();
@@ -112,8 +115,7 @@ public class DoctorFromController {
             DoctorDto itemDto = new DoctorDto(id, name, address, email, number, type,fee);
 
             try {
-                DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
-                boolean isSaved = doctorDAOImpl.save(itemDto);
+                boolean isSaved = doctorBO.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Doctor Saved!", ButtonType.OK).show();
@@ -141,7 +143,7 @@ public class DoctorFromController {
         double fee = Double.parseDouble(txtFee.getText());
 
         try {
-            boolean isUpdated = doctorDAOImpl.update(new DoctorDto(id, name, address, email, number, type, fee));
+            boolean isUpdated = doctorBO.update(new DoctorDto(id, name, address, email, number, type, fee));
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Doctor updated!").show();
                 clearFields();
@@ -189,7 +191,7 @@ public class DoctorFromController {
         ObservableList<DoctorTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<DoctorDto> dtoList = doctorDAOImpl.getAll();
+            List<DoctorDto> dtoList = doctorBO.getAll();
             for (DoctorDto dto : dtoList) {
                 Button deleteButton = new Button();
                 Button updateButton = new Button();
@@ -218,17 +220,6 @@ public class DoctorFromController {
                         tblDoctor.refresh();
                     }
                 });
-//                updateButton.setOnAction((e) -> {
-//                    int selectedIndex = tblDoctor.getSelectionModel().getSelectedIndex();
-//                    String code = (String) tblId.getCellData(selectedIndex);
-//                    System.out.println(code);
-//                    try {
-//                        doctorPane.getChildren().clear();
-//                        //doctorPane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/doctorDetails.fxml")));
-//                    } catch (Exception exception) {
-//                        exception.printStackTrace();
-//                    }
-//                });
                 obList.add(
                         new DoctorTm(
                                 dto.getId(),
@@ -317,7 +308,7 @@ public class DoctorFromController {
     public void mobileNumberSearchOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String number = txtNumber.getText();
         try {
-            DoctorDto dto = doctorDAOImpl.getDetailByContact(number);
+            DoctorDto dto = doctorBO.getDetailByContact(number);
             setFields(dto);
         } catch (SQLException e) {
             e.printStackTrace();

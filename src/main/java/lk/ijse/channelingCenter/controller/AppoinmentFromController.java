@@ -14,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 //import lk.ijse.channelingCenter.model.AppoinmentListModel;
+import lk.ijse.channelingCenter.BO.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
 import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
@@ -44,6 +46,7 @@ public class AppoinmentFromController {
     public TableColumn colStatus;
 
     AppoinmentDAOImpl appoinmentmodel = new AppoinmentDAOImpl();
+private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
     @SneakyThrows
     public void initialize() {
         setCellValueFactory();
@@ -71,7 +74,7 @@ public class AppoinmentFromController {
 
     private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
-            List<AppoinmentDto> dtoList = appoinmentmodel.getAll();
+            List<AppoinmentDto> dtoList =appoinmentBO.getAll();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -125,7 +128,7 @@ public class AppoinmentFromController {
 
     private void deleteItem(String code) throws ClassNotFoundException {
         try {
-            boolean isDeleted = appoinmentmodel.delete(code);
+            boolean isDeleted = appoinmentBO.delete(code);
             if (isDeleted) {
                 //new Alert(Alert.AlertType.CONFIRMATION, "Medicine item deleted!").show();
             }

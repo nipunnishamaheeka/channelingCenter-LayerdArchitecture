@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.EmployeeBO;
+import lk.ijse.channelingCenter.BO.Impl.EmployeeBOImpl;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
@@ -52,7 +54,7 @@ public class EmployeeDetailsFromController {
     @FXML
     private TextField txtSalary;
     EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
-
+    private EmployeeBO employeeBO = new EmployeeBOImpl();
     public void initialize() throws SQLException {
         setEmployeeID();
         loadJobRolesTypes();
@@ -139,8 +141,7 @@ public class EmployeeDetailsFromController {
             EmployeeDto itemDto = new EmployeeDto(id, name, address, number, jobRole, qualification, salary);
 
             try {
-                EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
-                boolean isAdded = employeeModel.save(itemDto);
+                boolean isAdded = employeeBO.save(itemDto);
                 if (isAdded) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Employee added", ButtonType.OK).show();
                     clearFields();
@@ -159,7 +160,7 @@ public class EmployeeDetailsFromController {
         String id = txtId.getText();
 
         try {
-            boolean isDeleted = employeeModel.delete(id);
+            boolean isDeleted = employeeBO.delete(id);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Employee deleted!").show();
@@ -185,7 +186,7 @@ public class EmployeeDetailsFromController {
         var EmployeeDto = new EmployeeDto(id, name, address, number, jobRole, qualification, salary);
 
         try {
-            boolean isUpdated = employeeModel.update(EmployeeDto);
+            boolean isUpdated = employeeBO.update(EmployeeDto);
             if (isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Employee updated").show();
                 clearFields();

@@ -11,6 +11,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.EmployeeBO;
+import lk.ijse.channelingCenter.BO.Impl.EmployeeBOImpl;
+import lk.ijse.channelingCenter.DAO.EmployeeDAO;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.dto.tm.EmployeeTm;
 import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
@@ -54,8 +57,7 @@ public class EmployeeFromController {
     private TableColumn<?, ?> colDelete;
 
       EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
-
-
+      private EmployeeBO employeeBO = new EmployeeBOImpl();
     public void btnaddemployeeOnAction() throws IOException {
         employeePane.getChildren().clear();
         employeePane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/employeeDetails.fxml")));
@@ -100,7 +102,7 @@ public void initialize() {
         ObservableList<EmployeeTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<EmployeeDto> dtoList = employeeModel.getAll();
+            List<EmployeeDto> dtoList = employeeBO.getAll();
 
             for(EmployeeDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -166,7 +168,7 @@ public void initialize() {
 
     private void deleteEmployee(String code) throws ClassNotFoundException {
         try {
-            boolean b = employeeModel.delete(code);
+            boolean b = employeeBO.delete(code);
             if (b){
 //                new Alert(Alert.AlertType.CONFIRMATION,"Deleted").show();
             }
