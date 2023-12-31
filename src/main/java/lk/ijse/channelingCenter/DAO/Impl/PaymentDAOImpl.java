@@ -18,23 +18,15 @@ public class PaymentDAOImpl implements PaymentDAO {
                 dto.getPayment_time(),
                 dto.getAmount(),
                 dto.getAppoinment_id());
-
-
     }
-@Override
-    public boolean update(final PaymentDto dto) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
 
-        String sql = "UPDATE payment SET payment_id = ?,payment_date = ?,payment_time = ?,amount = ?,appointment_id = ?  WHERE  = payment_id?";
-        PreparedStatement pstm = connection.prepareStatement(sql);
-
-        pstm.setString(1, dto.getPayment_id());
-        pstm.setDate(2, dto.getPayment_date());
-        pstm.setTime(3, dto.getPayment_time());
-        pstm.setDouble(4, dto.getAmount());
-        pstm.setString(5, dto.getAppoinment_id());
-
-        return pstm.executeUpdate() > 0;
+    @Override
+    public boolean update(final PaymentDto dto) throws SQLException, ClassNotFoundException {
+        return CrudUtil.crudUtil("UPDATE payment SET payment_id = ?,payment_date = ?,payment_time = ?,amount = ?,appointment_id = ?  WHERE  = payment_id?", dto.getPayment_id(),
+                dto.getPayment_date(),
+                dto.getPayment_time(),
+                dto.getAmount(),
+                dto.getAppoinment_id());
     }
 
     public PaymentDto searchPayment(String Doc_id) throws SQLException {
@@ -98,7 +90,7 @@ public class PaymentDAOImpl implements PaymentDAO {
         return "PA001";
     }
 
-@Override
+    @Override
     public List<PaymentDto> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM payment");
         List<PaymentDto> dtoList = new ArrayList<>();

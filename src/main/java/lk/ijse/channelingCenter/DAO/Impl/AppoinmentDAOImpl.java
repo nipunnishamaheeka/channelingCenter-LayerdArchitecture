@@ -166,7 +166,7 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
 
         return dto;
     }
-
+@Override
     public boolean updateAppoinmentStatus(String appoinmentId) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("UPDATE appoinment SET status = 'complete' WHERE appoinment_id = ?", appoinmentId);
 

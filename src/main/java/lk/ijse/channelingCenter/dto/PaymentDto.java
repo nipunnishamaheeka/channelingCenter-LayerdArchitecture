@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -11,7 +12,7 @@ import java.sql.Time;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class PaymentDto {
+public class PaymentDto implements Serializable {
     private String payment_id;
     private Date payment_date;
     private Time payment_time;

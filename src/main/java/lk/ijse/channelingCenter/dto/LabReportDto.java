@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class LabReportDto {
+public class LabReportDto implements Serializable {
     private String lab_reportid;
     private String patient_id;
     private String date;
