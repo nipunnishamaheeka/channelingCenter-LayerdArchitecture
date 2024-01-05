@@ -77,7 +77,6 @@ public class PatientFromController {
     @FXML
     private TableColumn<?, ?> colSex;
 
-    PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
     private PatientBO patientBO = new PatientBOImpl();
 
     private void setCellValueFactory() {
@@ -120,7 +119,7 @@ public class PatientFromController {
         ObservableList<PatientTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PatientDto> dtoList = new PatientDAOImpl().getAll();
+            List<PatientDto> dtoList =patientBO.getAll();
 
             for (PatientDto dto : dtoList) {
                 Button deleteButton = new Button();
@@ -275,9 +274,7 @@ public class PatientFromController {
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Patient not saved!").show();
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -360,7 +357,7 @@ public class PatientFromController {
 
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientDAOImpl().generateNextId());
+            lblPatientId.setText(patientBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {

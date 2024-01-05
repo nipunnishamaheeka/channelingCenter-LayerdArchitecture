@@ -15,6 +15,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import lk.ijse.channelingCenter.BO.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.DoctorBO;
+import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
+import lk.ijse.channelingCenter.BO.Impl.DoctorBOImpl;
+import lk.ijse.channelingCenter.BO.Impl.MedicineBOImpl;
+import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
+import lk.ijse.channelingCenter.BO.MedicineBO;
+import lk.ijse.channelingCenter.BO.PatientBO;
 import lk.ijse.channelingCenter.DAO.AppoinmentDAO;
 import lk.ijse.channelingCenter.DAO.DoctorDAO;
 import lk.ijse.channelingCenter.DAO.MedicineDAO;
@@ -68,20 +76,22 @@ public class OverViewFromController implements Initializable {
     @FXML
     private Label AllDoctors;
 
-    AppoinmentDAO appoinmentDAOImpl = new AppoinmentDAOImpl();
-    DoctorDAO doctorDAOImpl = new DoctorDAOImpl();
-    PatientDAO patientDAOImpl = new PatientDAOImpl();
-    MedicineDAO medicineDAOImpl = new MedicineDAOImpl();
+
+
+    private DoctorBO doctorBO = new DoctorBOImpl();
+   private PatientBO patientBO = new PatientBOImpl();
+    private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
+   private MedicineBO medicineBO = new MedicineBOImpl();
     @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ApoToday.setText(AppoinmentDAOImpl.getToday());
-        patientToday.setText(patientDAOImpl.getCount());
-        doctorToday.setText(doctorDAOImpl.getCount());
-        medicineStock.setText(medicineDAOImpl.getAllCount());
-        ApoinemntToday.setText(AppoinmentDAOImpl.getToday());
-        AllAppoinments.setText(appoinmentDAOImpl.getAllCount());
-        AllDoctors.setText(doctorDAOImpl.getCount());
+        ApoToday.setText(appoinmentBO.getToday());
+        patientToday.setText(patientBO.getCount());
+        doctorToday.setText(doctorBO.getCount());
+        medicineStock.setText(medicineBO.getAllCount());
+        ApoinemntToday.setText(appoinmentBO.getToday());
+        AllAppoinments.setText(appoinmentBO.getAllCount());
+        AllDoctors.setText(doctorBO.getCount());
 
         loadAllAppoinments();
         setCellValueFactory();
@@ -111,7 +121,7 @@ private void setPieChart(){
 }
     private void loadAllItems() throws SQLException {
         try {
-            List<DoctorDto> dtoList = doctorDAOImpl.getAll();
+            List<DoctorDto> dtoList = doctorBO.getAll();
 
             ObservableList<DoctorTm> obList = FXCollections.observableArrayList();
 
@@ -165,7 +175,7 @@ private void setPieChart(){
 
     private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
         try {
-            List<AppoinmentDto> dtoList = appoinmentDAOImpl.getPendingAppoinemts();
+            List<AppoinmentDto> dtoList = appoinmentBO.getPendingAppoinemts();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -228,7 +238,7 @@ private void setPieChart(){
 
     private void deleteItem(String code) throws ClassNotFoundException {
         try {
-            boolean b = appoinmentDAOImpl.delete(code);
+            boolean b = appoinmentBO.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }
@@ -238,7 +248,7 @@ private void setPieChart(){
     }
     private void deleteDoctor(String code) {
         try {
-            boolean b = doctorDAOImpl.delete(code);
+            boolean b = doctorBO.delete(code);
             if (b) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Deleted");
             }

@@ -53,7 +53,6 @@ public class EmployeeDetailsFromController {
 
     @FXML
     private TextField txtSalary;
-    EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
     private EmployeeBO employeeBO = new EmployeeBOImpl();
     public void initialize() throws SQLException {
         setEmployeeID();

@@ -1,5 +1,6 @@
 package lk.ijse.channelingCenter.DAO.Impl;
 
+import lk.ijse.channelingCenter.DAO.CompleteOrderDAO;
 import lk.ijse.channelingCenter.Util.CrudUtil;
 import lk.ijse.channelingCenter.dto.tm.CartTm;
 
@@ -7,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CompleteOrderDAOImpl {
+public class CompleteOrderDAOImpl implements CompleteOrderDAO {
     public boolean saveOrder(String id, List<CartTm> list) throws SQLException, ClassNotFoundException {
         for (CartTm tm : list) {
             boolean isSaved = saveOrder(id, tm);
@@ -18,7 +19,7 @@ public class CompleteOrderDAOImpl {
         return true;
     }
 @Override
-    private boolean saveOrder(String id, CartTm tm) throws SQLException, ClassNotFoundException {
+    public boolean saveOrder(String id, CartTm tm) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("insert into completeorders values(?,?,?)",tm.getM_Code(),id,tm.getQty());
 
     }

@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lk.ijse.channelingCenter.BO.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.PatientDto;
@@ -48,7 +50,8 @@ public class AddAppoinmentFromController {
     private Label lblPatientName;
     @FXML
     private Label lblAppoinmentId;
-    AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
+   // AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
+    private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
     @FXML
     private TextField txtAge;
 
@@ -70,21 +73,6 @@ public class AddAppoinmentFromController {
             System.out.println(e.getMessage());
         }
     }
-  /*  private void setPatientID(){
-        try{
-            cmbPatientId.setId(new AppoinmentModel().autoGenarateId());
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }*/
-//  private void setPatientID() {
-//      try {
-//          lblPatientId.setId(new AppoinmentModel().patientautoGenarateId());
-//      } catch (SQLException e) {
-//          System.out.println(e.getMessage());
-//      }
-//  }
-
     @FXML
     void btnClerOnAction(ActionEvent event) {
         clearFields();
@@ -106,8 +94,7 @@ public class AddAppoinmentFromController {
         AppoinmentDto itemDto = new AppoinmentDto(appoinmentId,date,id,patinetName,age,doctorId,doctorName,status);
 
         try {
-            AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
-            boolean isSaved = appoinmentModel.save(itemDto);
+            boolean isSaved = appoinmentBO.save(itemDto);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Appoinment Saved!", ButtonType.OK).show();
@@ -125,7 +112,7 @@ public class AddAppoinmentFromController {
     private void loadAllItems() throws ClassNotFoundException {
         ObservableList<AppoinmentDto> obList = FXCollections.observableArrayList();
         try {
-            List<AppoinmentDto> appoinmentDtoList = appoinmentModel.getAll();
+            List<AppoinmentDto> appoinmentDtoList = appoinmentBO.getAll();
             for (AppoinmentDto dto : appoinmentDtoList) {
                 obList.add(dto);
             }
@@ -180,21 +167,7 @@ public class AddAppoinmentFromController {
             throw new RuntimeException(e);
         }
     }
-    /*private void loadAPatientIds() {
 
-         ObservableList<String> obList = FXCollections.observableArrayList();
-         try {
-             List<PatientDto> cusList = new PatientModel().getAllPatient();
-
-             for (PatientDto dto : cusList) {
-                 obList.add(dto.getPatient_id());
-             }
-
-             lblPatientId.setId(obList.toString());
-         } catch (SQLException e) {
-             throw new RuntimeException(e);
-         }
-     }*/
     public void btnaddOnAction(ActionEvent actionEvent) throws IOException {
         AnchorPane rootNode = FXMLLoader.load(this.getClass().getResource("/view/addAppoinmentPatinetDetials.fxml"));
         Scene scene = new Scene(rootNode);

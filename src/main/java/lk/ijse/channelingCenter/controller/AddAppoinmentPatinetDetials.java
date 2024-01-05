@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
+import lk.ijse.channelingCenter.BO.PatientBO;
 import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
@@ -12,10 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddAppoinmentPatinetDetials {
-    private final PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
     public Label lblPatientId;
     public TextField txtAge;
-    public TextField txtMail;
     public TextField txtName;
 
     public static String name = null;
@@ -26,6 +26,7 @@ public class AddAppoinmentPatinetDetials {
     public Button btnOk;
     public TextField txtNumber;
 
+private PatientBO patientBO = new PatientBOImpl();
     public void initialize() throws SQLException {
 
         setPatientID();
@@ -57,8 +58,8 @@ public class AddAppoinmentPatinetDetials {
             PatientDto itemDto = new PatientDto(id, name, number, address, sex, email, age,blood);
 
             try {
-                PatientDAOImpl patientDAOImpl = new PatientDAOImpl();
-                boolean isSaved = patientDAOImpl.save(itemDto);
+
+                boolean isSaved = patientBO.save(itemDto);
 
                 if (isSaved) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Patient saved!").show();
@@ -69,9 +70,7 @@ public class AddAppoinmentPatinetDetials {
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Patient not saved!").show();
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {

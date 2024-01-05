@@ -9,6 +9,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.tm.CompleteOrdersTm;
@@ -41,7 +43,7 @@ public class CompleteOrderFromController {
 
     @FXML
     private TableView<CompleteOrdersTm> tblMedicine;
-
+private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
     public void initialize() throws ClassNotFoundException {
         setValueFactories();
         loadCompleteOrders();
@@ -54,9 +56,8 @@ public class CompleteOrderFromController {
         colAction.setCellValueFactory(new PropertyValueFactory<>("btn"));
     }
     private void loadCompleteOrders() throws ClassNotFoundException {
-        AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
         try {
-            List<AppoinmentDto> allAppoinment = appoinmentModel.getAll();
+            List<AppoinmentDto> allAppoinment = appoinmentBO.getAll();
             ObservableList<CompleteOrdersTm> list = FXCollections.observableArrayList();
             for (AppoinmentDto dto : allAppoinment) {
                 if (dto.getStatus().equals("complete")) {

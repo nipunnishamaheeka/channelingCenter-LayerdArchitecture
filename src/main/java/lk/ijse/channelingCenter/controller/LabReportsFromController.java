@@ -77,7 +77,6 @@ public class LabReportsFromController {
 
     @FXML
     private TableColumn<?, ?> colReportId;
-    LabReportDAOImpl labReportDAOImpl = new LabReportDAOImpl();
     private LabReportBO labReportBO = new LabReportBOImpl();
 
     public void initialize() throws SQLException {
@@ -399,7 +398,7 @@ public class LabReportsFromController {
     private void fillFields(LabReportDto dto) throws SQLException {
         txtPatientName.setText(dto.getPatient_name());
         try {
-            txtEmail.setText(labReportDAOImpl.getEmail(dto.getLab_reportid()));
+            txtEmail.setText(labReportBO.getEmail(dto.getLab_reportid()));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

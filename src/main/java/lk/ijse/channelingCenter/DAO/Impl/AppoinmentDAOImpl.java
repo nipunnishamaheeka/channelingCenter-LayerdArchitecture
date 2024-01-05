@@ -14,22 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppoinmentDAOImpl implements AppoinmentDAO {
-    @SneakyThrows
-    public static String getToday() {
+@Override
+    public String getTodayCount() throws SQLException, ClassNotFoundException {
         String today = java.time.LocalDate.now().toString();
         System.out.println(today);
 
-        Connection connection = DbConnection.getInstance().getConnection();
-        String sql = "SELECT COUNT(*) FROM appoinment WHERE date = ?";
-        PreparedStatement pstm = connection.prepareStatement(sql);
-        pstm.setString(1, today);
-        ResultSet resultSet = pstm.executeQuery();
+        ResultSet resultSet = CrudUtil.crudUtil("SELECT COUNT(*) FROM appoinment WHERE date = ?", today);
+
         if (resultSet.next()) {
             return resultSet.getString(1);
         }
         return null;
     }
-@Override
+
+    @Override
     public String getAllCount() throws SQLException, ClassNotFoundException {
         ResultSet rst = CrudUtil.crudUtil("SELECT COUNT(*) FROM appoinment");
         if (rst.next()) {
@@ -37,7 +35,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         }
         return null;
     }
-@Override
+
+    @Override
     public String getPendingOrders() throws SQLException, ClassNotFoundException {
 
         ResultSet rst = CrudUtil.crudUtil("SELECT COUNT(*) FROM appoinment where status = 'pending'");
@@ -46,7 +45,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         }
         return null;
     }
-@Override
+
+    @Override
     public List<AppoinmentDto> getPendingAppoinemts() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment where status = 'pending'");
         List<AppoinmentDto> dtoList = new ArrayList<>();
@@ -67,10 +67,11 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         return dtoList;
     }
 
-@Override
+    @Override
     public boolean save(final AppoinmentDto dto) throws SQLException, ClassNotFoundException {
-         return CrudUtil.crudUtil("insert into appoinment values(?,?,?,?,?,?,?,?)",dto.getAppoinment_id(),dto.getDate(),dto.getPatinet_id(), dto.getAge(), dto.getId(), dto.getDoctor_name(), dto.getPatinetName(), dto.getStatus());
+        return CrudUtil.crudUtil("insert into appoinment values(?,?,?,?,?,?,?,?)", dto.getAppoinment_id(), dto.getDate(), dto.getPatinet_id(), dto.getAge(), dto.getId(), dto.getDoctor_name(), dto.getPatinetName(), dto.getStatus());
     }
+
     @Override
     public boolean update(final AppoinmentDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
@@ -89,7 +90,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
 
         return pstm.executeUpdate() > 0;
     }
-@Override
+
+    @Override
     public List<AppoinmentDto> getAll() throws SQLException, ClassNotFoundException {
 
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment");
@@ -110,7 +112,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         }
         return dtoList;
     }
-@Override
+
+    @Override
     public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("DELETE FROM appoinment WHERE appoinment_id = ?", id);
 
@@ -132,7 +135,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         }
         return splitId(null);
     }
-@Override
+
+    @Override
     public String splitId(String current) {
 
         if (current != null) {
@@ -145,7 +149,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
         }
         return "A001";
     }
-@Override
+
+    @Override
     public AppoinmentDto searchAppoinmentID(String Aid) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = CrudUtil.crudUtil("SELECT * FROM appoinment WHERE appoinment_id = ?", Aid);
         AppoinmentDto dto = null;
@@ -166,7 +171,8 @@ public class AppoinmentDAOImpl implements AppoinmentDAO {
 
         return dto;
     }
-@Override
+
+    @Override
     public boolean updateAppoinmentStatus(String appoinmentId) throws SQLException, ClassNotFoundException {
         return CrudUtil.crudUtil("UPDATE appoinment SET status = 'complete' WHERE appoinment_id = ?", appoinmentId);
 

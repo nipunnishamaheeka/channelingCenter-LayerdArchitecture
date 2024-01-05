@@ -55,8 +55,6 @@ public class EmployeeFromController {
 
     @FXML
     private TableColumn<?, ?> colDelete;
-
-      EmployeeDAOImpl employeeModel = new EmployeeDAOImpl();
       private EmployeeBO employeeBO = new EmployeeBOImpl();
     public void btnaddemployeeOnAction() throws IOException {
         employeePane.getChildren().clear();

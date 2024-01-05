@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class AppoinmentFromController {
-    @Getter
-
     public AnchorPane appoinmentPane;
     public TableView tblAppointment;
     public TableColumn colId;
@@ -45,7 +43,6 @@ public class AppoinmentFromController {
     public TableColumn colDelete;
     public TableColumn colStatus;
 
-    AppoinmentDAOImpl appoinmentmodel = new AppoinmentDAOImpl();
 private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
     @SneakyThrows
     public void initialize() {

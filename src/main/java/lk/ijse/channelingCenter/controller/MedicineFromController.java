@@ -11,11 +11,12 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.channelingCenter.BO.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.CompleteOrderBO;
+import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
+import lk.ijse.channelingCenter.BO.Impl.CompleteOrderBOImpl;
 import lk.ijse.channelingCenter.BO.Impl.MedicineBOImpl;
 import lk.ijse.channelingCenter.BO.MedicineBO;
-import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.CompleteOrderDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.MedicineDAOImpl;
 import lk.ijse.channelingCenter.dto.*;
 import lk.ijse.channelingCenter.dto.tm.MedicineTm;
 
@@ -28,21 +29,14 @@ public class MedicineFromController {
     public AnchorPane medicinePane;
     public Label lblCode;
     public TextField txtMedicineName;
-    public TextField txtSupplierName;
-    public TextField txtStock;
     public TableView tblMedicine;
     public TableColumn colMediCode;
     public TableColumn colMedicineName;
-    public TableColumn colSupplierName;
-    public TableColumn colStock;
-    public Label lblSupName;
-    public ComboBox cmbSupplierName;
     public TextField txtDescription;
     public TableColumn colDescription;
     public TableColumn colQty;
     public TableColumn colPrice;
     public TableColumn ColDelete;
-    public TableColumn colUpdate;
     public TextField txtUniPrice;
     public TextField txtQty;
     public ComboBox cmbMedicineName;
@@ -57,15 +51,15 @@ public class MedicineFromController {
 
     @FXML
     private Label totalStock;
-    MedicineDAOImpl medicineDAOImpl = new MedicineDAOImpl();
-    AppoinmentDAOImpl appoinmentDAOImpl = new AppoinmentDAOImpl();
+   private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
     private MedicineBO medicineBO = new MedicineBOImpl();
-CompleteOrderDAOImpl completeOrderDAOImpl = new CompleteOrderDAOImpl();
+    CompleteOrderBO completeOrderBO = new CompleteOrderBOImpl();
     public void initialize() throws SQLException, ClassNotFoundException {
-        completeOrders.setText(completeOrderDAOImpl.getAllCompleteOrdersCount());
-        pendingOrders.setText(appoinmentDAOImpl.getPendingOrders());
-        totalStock.setText(medicineDAOImpl.getAllCount());
-        totalOrders.setText(appoinmentDAOImpl.getAllCount());
+        //Compete Order eka initialize  krpan
+        //completeOrders.setText(completeOrderBO.getAllCompleteOrdersCount());
+        pendingOrders.setText(appoinmentBO.getPendingOrders());
+        totalStock.setText(medicineBO.getAllCount());
+        totalOrders.setText(appoinmentBO.getAllCount());
         loadAllMedicine();
         setMedicineCode();
         setCellValueFactory();
@@ -110,7 +104,7 @@ private void loadMedicineTypes() {
 }
     private void setMedicineCode() {
         try {
-            lblCode.setText(new MedicineDAOImpl().generateNextId());
+            lblCode.setText(medicineBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {
@@ -141,9 +135,7 @@ private void loadMedicineTypes() {
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Medicine not saved!").show();
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else {

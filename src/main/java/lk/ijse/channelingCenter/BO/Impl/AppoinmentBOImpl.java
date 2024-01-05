@@ -14,7 +14,7 @@ public class AppoinmentBOImpl implements AppoinmentBO {
 
     @Override
     public String getToday() throws SQLException, ClassNotFoundException {
-        return appoinmentDAO;
+        return appoinmentDAO.getTodayCount();
     }
 
     @Override

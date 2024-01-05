@@ -12,5 +12,6 @@ public interface AppoinmentDAO extends CrudDAO<AppoinmentDto> {
     AppoinmentDto searchAppoinmentID(String Aid) throws SQLException, ClassNotFoundException;
     boolean updateAppoinmentStatus(String appoinmentId) throws SQLException, ClassNotFoundException;
     String getAllCount() throws SQLException, ClassNotFoundException;
+    String getTodayCount() throws SQLException, ClassNotFoundException;
 
 }

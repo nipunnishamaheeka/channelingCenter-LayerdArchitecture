@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
 import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
@@ -126,7 +127,7 @@ public class NavigationPannelFromController implements Initializable {
     public void searchOnAction(ActionEvent actionEvent) {
         String id = idSearch.getText();
 
-        var model = new PatientDAOImpl();
+        var model = new PatientBOImpl();
         try {
             PatientDto dto = model.search(id);
 

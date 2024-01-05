@@ -72,7 +72,6 @@ public class DoctorFromController {
 
     @FXML
     private TextField txtType;
-    DoctorDAOImpl doctorDAOImpl = new DoctorDAOImpl();
     private DoctorBO doctorBO = new DoctorBOImpl();
 
     public void initialize() throws SQLException, ClassNotFoundException {
@@ -210,7 +209,7 @@ public class DoctorFromController {
                         String code = (String) tblId.getCellData(selectedIndex);
                         System.out.println(code);
                         try {
-                            doctorDAOImpl.delete(code);
+                            doctorBO.delete(code);
                         } catch (SQLException ex) {
                             System.out.println(ex.getMessage());
                         } catch (ClassNotFoundException ex) {
