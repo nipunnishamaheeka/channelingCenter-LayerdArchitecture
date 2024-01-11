@@ -15,26 +15,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import lk.ijse.channelingCenter.BO.AppoinmentBO;
-import lk.ijse.channelingCenter.BO.DoctorBO;
-import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
-import lk.ijse.channelingCenter.BO.Impl.DoctorBOImpl;
-import lk.ijse.channelingCenter.BO.Impl.MedicineBOImpl;
-import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
-import lk.ijse.channelingCenter.BO.MedicineBO;
-import lk.ijse.channelingCenter.BO.PatientBO;
-import lk.ijse.channelingCenter.DAO.AppoinmentDAO;
-import lk.ijse.channelingCenter.DAO.DoctorDAO;
-import lk.ijse.channelingCenter.DAO.MedicineDAO;
-import lk.ijse.channelingCenter.DAO.PatientDAO;
+import lk.ijse.channelingCenter.BO.Custom.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Custom.DoctorBO;
+import lk.ijse.channelingCenter.BO.Custom.MedicineBO;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
 import lk.ijse.channelingCenter.dto.tm.DoctorTm;
-import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.MedicineDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -77,11 +66,11 @@ public class OverViewFromController implements Initializable {
     private Label AllDoctors;
 
 
+    private DoctorBO doctorBO = (DoctorBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.DOCTOR);
+    private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
+    private AppoinmentBO appoinmentBO = (AppoinmentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOINMENT);
+    private MedicineBO medicineBO = (MedicineBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.MEDICINE);
 
-    private DoctorBO doctorBO = new DoctorBOImpl();
-   private PatientBO patientBO = new PatientBOImpl();
-    private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
-   private MedicineBO medicineBO = new MedicineBOImpl();
     @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,27 +87,29 @@ public class OverViewFromController implements Initializable {
         loadAllItems();
         setPieChart();
     }
-private void setPieChart(){
 
-    ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList(
-            new PieChart.Data("Acetaminophen", 10),
-            new PieChart.Data("Adderall", 20),
-            new PieChart.Data("Amitriptyline", 30),
-            new PieChart.Data("Amlodiphine", 40),
-            new PieChart.Data("Amoxicillin", 50),
-            new PieChart.Data("Ativan", 100)
-    );
+    private void setPieChart() {
 
-    pieChart.setData(observableList);
+        ObservableList<PieChart.Data> observableList = FXCollections.observableArrayList(
+                new PieChart.Data("Acetaminophen", 10),
+                new PieChart.Data("Adderall", 20),
+                new PieChart.Data("Amitriptyline", 30),
+                new PieChart.Data("Amlodiphine", 40),
+                new PieChart.Data("Amoxicillin", 50),
+                new PieChart.Data("Ativan", 100)
+        );
 
-    // Set colors for each category individually (optional)
-    observableList.get(0).getNode().setStyle("-fx-pie-color: #1f77b4;");  // Acetaminophen - Blue
-    observableList.get(1).getNode().setStyle("-fx-pie-color: #ff7f0e;");  // Adderall - Orange
-    observableList.get(2).getNode().setStyle("-fx-pie-color: #2ca02c;");  // Amitriptyline - Green
-    observableList.get(3).getNode().setStyle("-fx-pie-color: #d62728;");  // Amlodiphine - Red
-    observableList.get(4).getNode().setStyle("-fx-pie-color: #9467bd;");  // Amoxicillin - Purple
-    observableList.get(5).getNode().setStyle("-fx-pie-color: #8c564b;");  // Ativan - Brown
-}
+        pieChart.setData(observableList);
+
+        // Set colors for each category individually (optional)
+        observableList.get(0).getNode().setStyle("-fx-pie-color: #1f77b4;");  // Acetaminophen - Blue
+        observableList.get(1).getNode().setStyle("-fx-pie-color: #ff7f0e;");  // Adderall - Orange
+        observableList.get(2).getNode().setStyle("-fx-pie-color: #2ca02c;");  // Amitriptyline - Green
+        observableList.get(3).getNode().setStyle("-fx-pie-color: #d62728;");  // Amlodiphine - Red
+        observableList.get(4).getNode().setStyle("-fx-pie-color: #9467bd;");  // Amoxicillin - Purple
+        observableList.get(5).getNode().setStyle("-fx-pie-color: #8c564b;");  // Ativan - Brown
+    }
+
     private void loadAllItems() throws SQLException {
         try {
             List<DoctorDto> dtoList = doctorBO.getAll();
@@ -173,7 +164,7 @@ private void setPieChart(){
         }
     }
 
-    private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
+    private void loadAllAppoinments() throws SQLException{
         try {
             List<AppoinmentDto> dtoList = appoinmentBO.getPendingAppoinemts();
 
@@ -222,7 +213,7 @@ private void setPieChart(){
 
             tblBookedAppoinment.setItems(obList);
             setFontAwesomeIcons();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -246,6 +237,7 @@ private void setPieChart(){
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
     }
+
     private void deleteDoctor(String code) {
         try {
             boolean b = doctorBO.delete(code);
@@ -258,6 +250,7 @@ private void setPieChart(){
             throw new RuntimeException(e);
         }
     }
+
     private void setCellValueFactory() {
         colAppointmentId.setCellValueFactory(new PropertyValueFactory<>("appoinment_id"));
         colPatientName.setCellValueFactory(new PropertyValueFactory<>("patientName"));

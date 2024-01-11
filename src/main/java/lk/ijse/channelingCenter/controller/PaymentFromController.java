@@ -12,11 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import lk.ijse.channelingCenter.BO.Impl.PaymentBOImpl;
-import lk.ijse.channelingCenter.BO.PaymentBO;
+import lk.ijse.channelingCenter.BO.Custom.PaymentBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.PaymentDto;
 import lk.ijse.channelingCenter.dto.tm.PaymentTm;
-import lk.ijse.channelingCenter.DAO.Impl.PaymentDAOImpl;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +32,7 @@ public class PaymentFromController {
     public TableColumn colAmount;
     public TableColumn colAction;
 
-private PaymentBO paymentBO = new PaymentBOImpl();
+private PaymentBO paymentBO = (PaymentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PAYMENT);
     public void initialize() {
         setCellValueFactory();
         loadAllPayments();

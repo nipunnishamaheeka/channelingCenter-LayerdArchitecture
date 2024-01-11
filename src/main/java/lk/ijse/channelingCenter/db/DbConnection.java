@@ -30,7 +30,7 @@ public class  DbConnection {
         }
 
     }
-    public static DbConnection getDbConnection() throws SQLException, ClassNotFoundException {
+    public static DbConnection getDbConnection() throws SQLException{
         return dbconnection == null ? dbconnection= new DbConnection() : dbconnection;
     }
 

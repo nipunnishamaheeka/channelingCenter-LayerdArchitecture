@@ -74,10 +74,6 @@
 				</textElement>
 				<text><![CDATA[Employee Details]]></text>
 			</staticText>
-			<image>
-				<reportElement x="20" y="3" width="90" height="70" uuid="90b22e88-b141-489a-9455-cbb9aba348b8"/>
-				<imageExpression><![CDATA["G:/Final Project Semster/channelingCenter/src/main/resources/assets/final logo .png"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="172" y="36" width="210" height="30" uuid="7f5e3b86-5c18-4cef-ad64-21de1c8e2e41"/>
 				<textElement>
@@ -91,6 +87,10 @@
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
+			<image>
+				<reportElement x="20" y="1" width="80" height="80" uuid="d73e027b-5769-4503-b184-126304f23bee"/>
+				<imageExpression><![CDATA["G:/GDSE/2nd SEM/channelingCenter-Layerd Architecture/src/main/resources/assets/final logo .png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

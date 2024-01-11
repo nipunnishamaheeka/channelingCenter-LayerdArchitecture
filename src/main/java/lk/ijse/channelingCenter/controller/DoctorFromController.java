@@ -11,11 +11,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.DoctorBO;
-import lk.ijse.channelingCenter.BO.Impl.DoctorBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.DoctorBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.tm.DoctorTm;
-import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -72,7 +71,7 @@ public class DoctorFromController {
 
     @FXML
     private TextField txtType;
-    private DoctorBO doctorBO = new DoctorBOImpl();
+    private DoctorBO doctorBO = (DoctorBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.DOCTOR);
 
     public void initialize() throws SQLException, ClassNotFoundException {
         setCellValueFactory();
@@ -185,7 +184,7 @@ public class DoctorFromController {
         });
     }
 
-    private void loadAllItems() throws SQLException, ClassNotFoundException {
+    private void loadAllItems() throws SQLException{
 
         ObservableList<DoctorTm> obList = FXCollections.observableArrayList();
 
@@ -246,7 +245,7 @@ public class DoctorFromController {
                 }
             });
             setDoctorID();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -272,7 +271,7 @@ public class DoctorFromController {
 
     private void setDoctorID() throws ClassNotFoundException {
         try {
-            lblDoctorId.setText(new DoctorDAOImpl().generateNextId());
+            lblDoctorId.setText(doctorBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

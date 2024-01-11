@@ -15,9 +15,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.PatientDto;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,7 +33,7 @@ public class NavigationPannelFromController implements Initializable {
     public Label lblDate;
     public Label lblTimeMini;
     public TextField idSearch;
-
+    private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
     @Override
     public void initialize(URL location, ResourceBundle resources) {
      generateRealTime();
@@ -127,9 +127,9 @@ public class NavigationPannelFromController implements Initializable {
     public void searchOnAction(ActionEvent actionEvent) {
         String id = idSearch.getText();
 
-        var model = new PatientBOImpl();
+
         try {
-            PatientDto dto = model.search(id);
+            PatientDto dto = patientBO.search(id);
 
             if(dto != null) {
                 fillFields(dto);

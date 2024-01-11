@@ -14,8 +14,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import lk.ijse.channelingCenter.BO.Custom.LoginBo;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -31,34 +32,36 @@ public class LoginFromController {
 
     @FXML
     private TextField txtUsername;
+    LoginBo loginBo = (LoginBo) BOFactory.getInstance().getBO(BOFactory.BOTypes.LOGIN);
 
     @FXML
     void btnloginOnAction(ActionEvent event) throws IOException {
 
         String userName = txtUsername.getText();
         String password = textpassword.getText();
-        LoginDAOImpl model = new LoginDAOImpl();
 
         System.out.println(txtUsername.getText().isEmpty());
-      if (!txtUsername.getText().isEmpty()){
-          try {
-              boolean isIn= model.searchUser(new LoginDto(null,userName,password,null));
-              if (!isIn){
-                  new Alert(Alert.AlertType.WARNING,"Invalid User Name or Password");
-                  textpassword.setStyle("-fx-border-color: red");
-                  new animatefx.animation.Shake(textpassword).play();;
+        if (!txtUsername.getText().isEmpty()) {
+            try {
+                boolean isIn = loginBo.searchUser(new LoginDto(null, userName, password, null));
+                if (!isIn) {
+                    new Alert(Alert.AlertType.WARNING, "Invalid User Name or Password");
+                    textpassword.setStyle("-fx-border-color: red");
+                    new animatefx.animation.Shake(textpassword).play();
+                    ;
 
-                  return;
-              }else  {
-                  navigateToMainWindow();
-              }
-          } catch (SQLException e) {
-              new Alert(Alert.AlertType.ERROR,e.getMessage()).show();} catch (ClassNotFoundException e) {
-              throw new RuntimeException(e);
-          }
-      }else{
-          new Alert(Alert.AlertType.WARNING,"Enter Your UserName");
-      }
+                    return;
+                } else {
+                    navigateToMainWindow();
+                }
+            } catch (SQLException e) {
+                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            new Alert(Alert.AlertType.WARNING, "Enter Your UserName");
+        }
     }
 
     @FXML
@@ -72,6 +75,7 @@ public class LoginFromController {
         stage.centerOnScreen();
         stage.show();
     }
+
     private void navigateToMainWindow() throws IOException {
         Parent rootNode = FXMLLoader.load(this.getClass().getResource("/view/navigationPannelFrom.fxml"));
         Scene scene = new Scene(rootNode);

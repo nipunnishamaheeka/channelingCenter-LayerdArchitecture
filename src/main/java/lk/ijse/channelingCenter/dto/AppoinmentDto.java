@@ -1,14 +1,11 @@
 package lk.ijse.channelingCenter.dto;
 
-import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor
 @Data

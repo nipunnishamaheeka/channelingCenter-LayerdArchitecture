@@ -8,11 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.EmployeeBO;
-import lk.ijse.channelingCenter.BO.Impl.EmployeeBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.EmployeeBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
-import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -53,17 +52,17 @@ public class EmployeeDetailsFromController {
 
     @FXML
     private TextField txtSalary;
-    private EmployeeBO employeeBO = new EmployeeBOImpl();
-    public void initialize() throws SQLException {
+    private EmployeeBO employeeBO = (EmployeeBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.EMPLOYEE);
+    public void initialize() throws SQLException, ClassNotFoundException {
         setEmployeeID();
         loadJobRolesTypes();
         loadQualificationTypes();
         // validateEmployee();
     }
 
-    private void setEmployeeID() {
+    private void setEmployeeID() throws ClassNotFoundException {
         try {
-            lblEmpId.setText(new EmployeeDAOImpl().generateNextId());
+            lblEmpId.setText(employeeBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -238,7 +237,7 @@ public class EmployeeDetailsFromController {
     public void btnSearchEmpIdOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         String id = txtemployeeId.getText();
 
-        var model = new EmployeeDAOImpl();
+        var model = employeeBO;
         try {
             EmployeeDto dto = model.searchEmployee(id);
 

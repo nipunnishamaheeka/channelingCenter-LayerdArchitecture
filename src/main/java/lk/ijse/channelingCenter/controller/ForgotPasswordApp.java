@@ -166,8 +166,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import lk.ijse.channelingCenter.BO.Custom.LoginBo;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.mail.Multipart;
@@ -213,7 +214,7 @@ public class ForgotPasswordApp {
     @FXML
     private Pane visiblePane;
     static int randNum;
-
+LoginBo loginBo = (LoginBo) BOFactory.getInstance().getBO(BOFactory.BOTypes.LOGIN);
     @FXML
     void btnResetOnAction(ActionEvent event) {
         String password = txtpassword.getText();
@@ -232,12 +233,11 @@ public class ForgotPasswordApp {
         String email = emailField.getText(); // assuming you have an email field
 
         try {
-            LoginDAOImpl loginDAOImpl = new LoginDAOImpl();
-            LoginDto loginDto = loginDAOImpl.getUserByEmail(email);
+            LoginDto loginDto = loginBo.getUserByEmail(email);
 
             if (loginDto != null) {
                 loginDto.setPassword(password);
-                loginDAOImpl.update(loginDto);
+                loginBo.update(loginDto);
 
                 new Alert(Alert.AlertType.CONFIRMATION, "Password has been reset.").show();
             } else {
@@ -357,30 +357,6 @@ public class ForgotPasswordApp {
         visiblePane.setVisible(true);
     }
 
-//    public void verifyOTP(ActionEvent actionEvent) {
-//        boolean isOTPValid = validateOTP();
-//        String enteredOTP = generateRandomOTP(); // Get the entered OTP from the user
-//        int expectedOTP = getGeneratedOTP(); // Replace with the actual OTP you generated or sent
-//if (isOTPValid) {
-//    if (expectedOTP == Integer.parseInt(enteredOTP)) {
-//        new Alert(Alert.AlertType.INFORMATION, "OTP verified. You can reset your password now.").show();
-//        changePasswordVisiblePane.setVisible(true);
-//    } else {
-//        new Alert(Alert.AlertType.ERROR, "Invalid OTP. Please try again.").show();
-//    }
-//}else{
-//
-//}
-//    }
-//
-//    private String getEnteredOTP() {
-//        return "123456"; // Assuming you have a TextField named otpTextField for user input
-//    }
-//
-//    private int getGeneratedOTP() {
-//        return true ? 123456 : 0; // Assuming you have a TextField named otpTextField for user input
-//    }
-
     @FXML
     void btnVerifiyOtpOnAction(ActionEvent event) {
         boolean isOTPValid = validateOTP();
@@ -406,8 +382,6 @@ public class ForgotPasswordApp {
 
     private boolean validateOTP() {
 
-//        boolean isNumberValid = CheckOTP(otpTextField.getText());
-
         if (!otpTextField.getText().equals(String.valueOf(random))) {
             otpTextField.setStyle("-fx-border-color: red");
             new animatefx.animation.Shake(otpTextField).play();
@@ -418,12 +392,5 @@ public class ForgotPasswordApp {
         return true;
     }
 
-//    private boolean CheckOTP(String enteredOTP) {
-////        if (generateRandomOTP() == Integer.parseInt(otpTextField.getText())) {
-//        if (enteredOTP.equals(random)) {
-//            return true;
-//        }
-//        return false;
-//    }
 }
 

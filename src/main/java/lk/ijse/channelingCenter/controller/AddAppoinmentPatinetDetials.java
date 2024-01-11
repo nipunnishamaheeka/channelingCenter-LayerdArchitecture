@@ -4,10 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
-import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
-import lk.ijse.channelingCenter.BO.PatientBO;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.PatientDto;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.sql.SQLException;
 import java.util.regex.Matcher;
@@ -26,7 +25,7 @@ public class AddAppoinmentPatinetDetials {
     public Button btnOk;
     public TextField txtNumber;
 
-private PatientBO patientBO = new PatientBOImpl();
+private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
     public void initialize() throws SQLException {
 
         setPatientID();
@@ -102,7 +101,7 @@ private PatientBO patientBO = new PatientBOImpl();
     }
     private void setPatientID() {
         try {
-            lblPatientId.setText(new PatientDAOImpl().generateNextId());
+            lblPatientId.setText(patientBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {

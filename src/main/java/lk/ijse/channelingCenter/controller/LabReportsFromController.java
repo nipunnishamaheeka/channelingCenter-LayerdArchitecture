@@ -11,11 +11,11 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.Impl.LabReportBOImpl;
-import lk.ijse.channelingCenter.BO.LabReportBO;
-import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.LabReportDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
+import lk.ijse.channelingCenter.BO.Custom.DoctorBO;
+import lk.ijse.channelingCenter.BO.Custom.LabReportBO;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
+import lk.ijse.channelingCenter.DAO.Custom.Impl.PatientDAOImpl;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.*;
 import lk.ijse.channelingCenter.dto.tm.LabReportTm;
@@ -77,7 +77,9 @@ public class LabReportsFromController {
 
     @FXML
     private TableColumn<?, ?> colReportId;
-    private LabReportBO labReportBO = new LabReportBOImpl();
+    private DoctorBO doctorBO = (DoctorBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.DOCTOR);
+    private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
+    private LabReportBO labReportBO = (LabReportBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.LABREPORT);
 
     public void initialize() throws SQLException {
         setLabReportsID();
@@ -267,7 +269,7 @@ public class LabReportsFromController {
     private void setLabReportsID() {
 
         try {
-            lblReportId.setText(new LabReportDAOImpl().generateNextId());
+            lblReportId.setText(labReportBO.generateNextId());
             //tblReport.refresh();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -280,7 +282,7 @@ public class LabReportsFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<PatientDto> cusList = new PatientDAOImpl().getAll();
+            List<PatientDto> cusList = patientBO.getAll();
 
             for (PatientDto dto : cusList) {
                 obList.add(dto.getPatient_id());
@@ -298,7 +300,7 @@ public class LabReportsFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<DoctorDto> cusList = new DoctorDAOImpl().getAll();
+            List<DoctorDto> cusList = doctorBO.getAll();
 
             for (DoctorDto dto : cusList) {
                 obList.add(dto.getId());
@@ -325,8 +327,6 @@ public class LabReportsFromController {
             lblAge.setText(age);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -368,7 +368,7 @@ public class LabReportsFromController {
 
     public void cmbDoctorIdOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         try {
-            String name = new DoctorDAOImpl().getname(cmbDoctor.getValue());
+            String name = doctorBO.getname(cmbDoctor.getValue());
             lblDoctorName.setText(name);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -378,7 +378,7 @@ public class LabReportsFromController {
     public void btnSearchIdOnAction(ActionEvent actionEvent) {
         String id = txtSearchId.getText();
 
-        var model = new LabReportDAOImpl();
+        var model = labReportBO;
         try {
             LabReportDto dto = model.searchLabReport(id);
 

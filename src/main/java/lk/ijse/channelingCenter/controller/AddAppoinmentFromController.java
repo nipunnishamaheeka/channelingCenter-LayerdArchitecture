@@ -10,14 +10,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import lk.ijse.channelingCenter.BO.AppoinmentBO;
-import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Custom.DoctorBO;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.DoctorDto;
 import lk.ijse.channelingCenter.dto.PatientDto;
-import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.DoctorDAOImpl;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -51,7 +50,9 @@ public class AddAppoinmentFromController {
     @FXML
     private Label lblAppoinmentId;
    // AppoinmentDAOImpl appoinmentModel = new AppoinmentDAOImpl();
-    private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
+    private AppoinmentBO appoinmentBO = (AppoinmentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOINMENT);
+    private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
+    private DoctorBO doctorBO = (DoctorBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.DOCTOR);
     @FXML
     private TextField txtAge;
 
@@ -68,7 +69,7 @@ public class AddAppoinmentFromController {
 
     private void setAppoinmentId() throws ClassNotFoundException {
         try {
-            lblAppoinmentId.setText(new AppoinmentDAOImpl().generateNextId());
+            lblAppoinmentId.setText(appoinmentBO.generateNextId());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -138,7 +139,7 @@ public class AddAppoinmentFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<PatientDto> cusList = new PatientDAOImpl().getAll();
+            List<PatientDto> cusList = patientBO.getAll();
 
             for (PatientDto dto : cusList) {
                 obList.add(dto.getPatient_id());
@@ -156,7 +157,7 @@ public class AddAppoinmentFromController {
 
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<DoctorDto> cusList = new DoctorDAOImpl().getAll();
+            List<DoctorDto> cusList = doctorBO.getAll();
 
             for (DoctorDto dto : cusList) {
                 obList.add(dto.getId());
@@ -181,7 +182,7 @@ public class AddAppoinmentFromController {
     @FXML
     public void cmbDoctorOnAction(ActionEvent actionEvent) throws ClassNotFoundException {
         try {
-            String name = new DoctorDAOImpl().getname(cmbDoctorId.getValue());
+            String name = doctorBO.getname(cmbDoctorId.getValue());
             lblDoctorName.setText(name);
 
         } catch (SQLException e) {
@@ -191,9 +192,9 @@ public class AddAppoinmentFromController {
     @FXML
     void cmbPatientOnAction(ActionEvent event) {
         try {
-            String name = new PatientDAOImpl().getPatientName(cmbPatientId.getValue());
+            String name = patientBO.getPatientName(cmbPatientId.getValue());
             lblPatientName.setText(name);
-            String age = new PatientDAOImpl().getPatientAge(cmbPatientId.getValue());
+            String age = patientBO.getPatientAge(cmbPatientId.getValue());
             lblAge.setText((age));
 
 

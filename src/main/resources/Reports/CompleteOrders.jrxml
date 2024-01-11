@@ -107,10 +107,6 @@ WHERE
 				</textElement>
 				<text><![CDATA[Medicine Order's Details]]></text>
 			</staticText>
-			<image>
-				<reportElement x="20" y="3" width="90" height="70" uuid="f5f7e19d-23a7-484b-8889-062312df2d9f"/>
-				<imageExpression><![CDATA["G:/Final Project Semster/channelingCenter/src/main/resources/assets/final logo .png"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="172" y="36" width="210" height="30" uuid="883d9550-3843-468c-9a05-a532794ec406"/>
 				<textElement>
@@ -124,6 +120,10 @@ WHERE
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
+			<image>
+				<reportElement x="20" y="1" width="80" height="80" uuid="1a6db06a-426f-4a5a-a1f7-24f0a0dd4675"/>
+				<imageExpression><![CDATA["G:/GDSE/2nd SEM/channelingCenter-Layerd Architecture/src/main/resources/assets/final logo .png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

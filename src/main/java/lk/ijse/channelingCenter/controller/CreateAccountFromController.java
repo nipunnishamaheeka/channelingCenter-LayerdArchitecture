@@ -12,8 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lk.ijse.channelingCenter.BO.Custom.LoginBo;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.LoginDto;
-import lk.ijse.channelingCenter.DAO.Impl.LoginDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ public class CreateAccountFromController {
     private TextField txtUsername;
     @FXML
     private TextField txtEmail;
+    LoginBo loginBo = (LoginBo) BOFactory.getInstance().getBO(BOFactory.BOTypes.LOGIN);
     @FXML
     void txtLoginOnMouseClicked(MouseEvent event) throws IOException {
         Stage stage = new Stage();
@@ -79,11 +81,10 @@ public class CreateAccountFromController {
                 String password = txtpassword.getText();
                 String email = txtEmail.getText();
 
-                LoginDAOImpl loginDAOImpl = new LoginDAOImpl();
                 if (password.equals(txtConfromPassword.getText())) {
 
                     try {
-                        boolean isSaved = loginDAOImpl.save(new LoginDto(fullname, username, password, email));
+                        boolean isSaved = loginBo.save(new LoginDto(fullname, username, password, email));
                         if (isSaved) {
                             new Alert(Alert.AlertType.CONFIRMATION, "User Added Successfully").show();
                             return;

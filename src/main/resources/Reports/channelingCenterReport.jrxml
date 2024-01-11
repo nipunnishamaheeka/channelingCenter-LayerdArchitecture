@@ -77,7 +77,7 @@ Channeling Center]]></text>
 			</staticText>
 			<image>
 				<reportElement x="110" y="0" width="50" height="50" uuid="709fbadb-7c2b-461f-8668-d23541383c6b"/>
-				<imageExpression><![CDATA["G:/Final Project Semster/channelingCenter/src/main/resources/assets/final logo .png"]]></imageExpression>
+				<imageExpression><![CDATA["G:/GDSE/2nd SEM/channelingCenter-Layerd Architecture/src/main/resources/assets/final logo .png"]]></imageExpression>
 			</image>
 		</band>
 	</title>

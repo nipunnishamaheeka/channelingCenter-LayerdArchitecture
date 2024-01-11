@@ -11,12 +11,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.AppoinmentBO;
-import lk.ijse.channelingCenter.BO.CompleteOrderBO;
-import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
-import lk.ijse.channelingCenter.BO.Impl.CompleteOrderBOImpl;
-import lk.ijse.channelingCenter.BO.Impl.MedicineBOImpl;
-import lk.ijse.channelingCenter.BO.MedicineBO;
+import lk.ijse.channelingCenter.BO.Custom.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.Custom.CompleteOrderBO;
+import lk.ijse.channelingCenter.BO.Custom.MedicineBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.*;
 import lk.ijse.channelingCenter.dto.tm.MedicineTm;
 
@@ -51,9 +49,9 @@ public class MedicineFromController {
 
     @FXML
     private Label totalStock;
-   private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
-    private MedicineBO medicineBO = new MedicineBOImpl();
-    CompleteOrderBO completeOrderBO = new CompleteOrderBOImpl();
+   private AppoinmentBO appoinmentBO = (AppoinmentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOINMENT);
+    private MedicineBO medicineBO = (MedicineBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.MEDICINE);
+    CompleteOrderBO completeOrderBO = (CompleteOrderBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.COMPLETEORDERS);
     public void initialize() throws SQLException, ClassNotFoundException {
         //Compete Order eka initialize  krpan
         //completeOrders.setText(completeOrderBO.getAllCompleteOrdersCount());

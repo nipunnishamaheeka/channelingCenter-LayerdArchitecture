@@ -98,7 +98,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="89" splitType="Stretch">
+		<band height="90" splitType="Stretch">
 			<staticText>
 				<reportElement x="122" y="3" width="328" height="37" uuid="830a0b6f-2dae-4099-9a8e-597bf45d7d49"/>
 				<textElement markup="styled">
@@ -113,16 +113,16 @@
 				</textElement>
 				<text><![CDATA[Ayuwarna Channeling Center]]></text>
 			</staticText>
-			<image>
-				<reportElement x="20" y="3" width="90" height="70" uuid="cafce085-2b67-4d3d-80f4-7dfa4a05370c"/>
-				<imageExpression><![CDATA["G:/Final Project Semster/channelingCenter/src/main/resources/assets/final logo .png"]]></imageExpression>
-			</image>
 			<rectangle>
 				<reportElement x="-20" y="87" width="595" height="1" uuid="d03edece-e81a-458e-9eed-228d460cb266"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
+			<image>
+				<reportElement x="20" y="1" width="80" height="80" uuid="1c76640c-0224-4fce-baa2-974348ab97bd"/>
+				<imageExpression><![CDATA["G:/GDSE/2nd SEM/channelingCenter-Layerd Architecture/src/main/resources/assets/final logo .png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

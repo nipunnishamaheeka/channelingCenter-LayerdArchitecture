@@ -9,12 +9,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.AppoinmentBO;
-import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.db.DbConnection;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.tm.CompleteOrdersTm;
-import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -43,7 +42,7 @@ public class CompleteOrderFromController {
 
     @FXML
     private TableView<CompleteOrdersTm> tblMedicine;
-private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
+private AppoinmentBO appoinmentBO = (AppoinmentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOINMENT);
     public void initialize() throws ClassNotFoundException {
         setValueFactories();
         loadCompleteOrders();

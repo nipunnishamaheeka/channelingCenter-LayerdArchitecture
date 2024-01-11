@@ -12,11 +12,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.Impl.PatientBOImpl;
-import lk.ijse.channelingCenter.BO.PatientBO;
+import lk.ijse.channelingCenter.BO.Custom.PatientBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.PatientDto;
 import lk.ijse.channelingCenter.dto.tm.PatientTm;
-import lk.ijse.channelingCenter.DAO.Impl.PatientDAOImpl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -77,7 +76,7 @@ public class PatientFromController {
     @FXML
     private TableColumn<?, ?> colSex;
 
-    private PatientBO patientBO = new PatientBOImpl();
+    private PatientBO patientBO = (PatientBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PATIENT);
 
     private void setCellValueFactory() {
         colPatientID.setCellValueFactory(new PropertyValueFactory<>("patient_id"));

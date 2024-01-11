@@ -11,12 +11,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.channelingCenter.BO.EmployeeBO;
-import lk.ijse.channelingCenter.BO.Impl.EmployeeBOImpl;
-import lk.ijse.channelingCenter.DAO.EmployeeDAO;
+import lk.ijse.channelingCenter.BO.Custom.EmployeeBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.EmployeeDto;
 import lk.ijse.channelingCenter.dto.tm.EmployeeTm;
-import lk.ijse.channelingCenter.DAO.Impl.EmployeeDAOImpl;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -55,7 +53,7 @@ public class EmployeeFromController {
 
     @FXML
     private TableColumn<?, ?> colDelete;
-      private EmployeeBO employeeBO = new EmployeeBOImpl();
+      private EmployeeBO employeeBO = (EmployeeBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.EMPLOYEE);
     public void btnaddemployeeOnAction() throws IOException {
         employeePane.getChildren().clear();
         employeePane.getChildren().add(FXMLLoader.load(this.getClass().getResource("/View/employeeDetails.fxml")));

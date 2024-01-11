@@ -14,12 +14,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 //import lk.ijse.channelingCenter.model.AppoinmentListModel;
-import lk.ijse.channelingCenter.BO.AppoinmentBO;
-import lk.ijse.channelingCenter.BO.Impl.AppoinmentBOImpl;
+import lk.ijse.channelingCenter.BO.Custom.AppoinmentBO;
+import lk.ijse.channelingCenter.BO.BOFactory;
 import lk.ijse.channelingCenter.dto.AppoinmentDto;
 import lk.ijse.channelingCenter.dto.tm.AppoinmentTm;
-import lk.ijse.channelingCenter.DAO.Impl.AppoinmentDAOImpl;
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -43,7 +41,8 @@ public class AppoinmentFromController {
     public TableColumn colDelete;
     public TableColumn colStatus;
 
-private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
+    AppoinmentBO appoinmentBO = (AppoinmentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOINMENT);
+
     @SneakyThrows
     public void initialize() {
         setCellValueFactory();
@@ -63,15 +62,16 @@ private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
         stage.show();
 
     }
+
     private void setFontAwesomeIcons() {
         tblAppointment.getItems().forEach(item -> {
             FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
         });
     }
 
-    private void loadAllAppoinments() throws SQLException, ClassNotFoundException {
+    private void loadAllAppoinments() throws SQLException{
         try {
-            List<AppoinmentDto> dtoList =appoinmentBO.getAll();
+            List<AppoinmentDto> dtoList = appoinmentBO.getAll();
 
             ObservableList<AppoinmentTm> obList = FXCollections.observableArrayList();
 
@@ -118,7 +118,7 @@ private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
 
             tblAppointment.setItems(obList);
             setFontAwesomeIcons();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -149,7 +149,7 @@ private AppoinmentBO appoinmentBO = new AppoinmentBOImpl();
 
     }
 
-    public void btnrefershonAction(MouseEvent mouseEvent) throws SQLException, ClassNotFoundException {
+    public void btnrefershonAction(MouseEvent mouseEvent) throws SQLException{
         loadAllAppoinments();
     }
 }
